@@ -1,0 +1,7 @@
+drop your game builds in this folder (zip them first).
+
+then point the download button in games.html at the file, e.g.:
+  <a class="btn btn--dl" href="downloads/your-game-v1.0.zip" download>▼ download build</a>
+
+tip: keep old versions around (your-game-v1.0.zip, v1.1.zip ...) so players
+can roll back if a patch breaks something.

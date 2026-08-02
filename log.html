@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kay_N</title>
+<meta name="description" content="Every transmission from Kay_N's workshop: devlogs, patches, releases, and notes.">
+<link rel="icon" href="Tab_Logo.png">
+<link rel="stylesheet" href="style.css">
+<script>/* runs before the body paints */
+try{
+  /* anyone arriving straight onto an inner page is sent to the front
+     door first; navigating inside the site afterwards is untouched */
+  if(!sessionStorage.getItem("kn-entered")){
+    sessionStorage.setItem("kn-entered","1");
+    location.replace("index.html");
+  }
+  if(!localStorage.getItem("kn-subject"))document.documentElement.classList.add("gated");
+}catch(e){document.documentElement.classList.add("gated");}</script>
+<script src="content.js" defer></script>
+<script src="main.js" defer></script>
+</head>
+<body>
+
+<div class="bgfx" aria-hidden="true"></div>
+
+<!-- access control: unregistered visitors must register a designation -->
+<div id="gate">
+  <form id="gate-form" autocomplete="off">
+    <pre id="gate-head"></pre>
+    <div class="gate__row">
+      <label class="gate__ps" for="gate-input">SUBJECT&nbsp;&gt;</label>
+      <span class="gate__fix" aria-hidden="true">SUBJ-</span>
+      <input id="gate-input" maxlength="12" spellcheck="false" autocomplete="off" aria-label="subject designation">
+    </div>
+    <p class="gate__err" id="gate-err" role="alert"></p>
+    <div class="gate__actions">
+      <button class="btn btn--dl" type="submit">register</button>
+    </div>
+    <p class="gate__fine">this designation is permanent. it cannot be changed, surrendered, or reissued.</p>
+  </form>
+</div>
+<div class="statusbar" role="banner">
+  <span class="statusbar__cell statusbar__sys">KN/OS v0.1.0</span>
+  <span class="statusbar__cell statusbar__sig" aria-hidden="true">sig <span id="sig-bars"><b>▮</b><b>▮</b><b>▮</b><i>▯</i></span></span>
+  <span class="statusbar__cell statusbar__spacer"></span>
+  <span class="statusbar__cell" id="subject-cell" hidden></span>
+  <span class="statusbar__cell" id="visit-counter" title="counted on this machine only">visits: -</span>
+  <span class="statusbar__cell statusbar__clock" id="clock" aria-label="local time">--:--:--</span>
+</div>
+
+<div class="frame">
+
+  <header class="masthead">
+    <div class="wordmark" id="wordmark">
+      <h1 class="wordmark__text" data-text="Kay_N">Kay_N<span class="cursor" aria-hidden="true">_</span></h1>
+    </div>
+    <p class="masthead__tagline js-tagline"></p>
+    <nav class="deck" aria-label="main">
+      <a href="index.html">home</a>
+      <a class="here" href="log.html">log</a>
+      <a href="games.html">games</a>
+      <a href="about.html">about</a>
+      <a class="js-discord deck__ext" href="#" target="_blank" rel="noopener">discord ↗</a>
+      <a class="js-twitter deck__ext" href="#" target="_blank" rel="noopener">twitter ↗</a>
+      <a class="js-youtube deck__ext" href="#" target="_blank" rel="noopener">youtube ↗</a>
+    </nav>
+  </header>
+
+  <main>
+
+  <section class="panel" aria-labelledby="archive-title">
+    <div class="panel__head">
+      <span class="panel__title" id="archive-title">transmission_log</span>
+      <span class="panel__meta">full archive · newest first</span>
+    </div>
+    <div class="panel__body">
+      <div id="archive"></div>
+      <noscript><p class="ph">the archive needs javascript - it reads from content.js</p></noscript>
+      <p class="panel__foot">end of records. the archive only grows.</p>
+    </div>
+  </section>
+
+  </main>
+
+  <footer class="basement">
+    <p>© 2026 Kay_N · <a class="js-discord" href="#" target="_blank" rel="noopener">discord</a> · <span class="js-mail"></span></p>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" width="512" height="512">
+  <title>The Receiver - bust</title>
+  <rect width="140" height="140" fill="#0a0a0a"/>
+  <g fill="#141414" stroke="#d9d9d9" stroke-width="1.8" stroke-linejoin="round">
+    <path d="M69.5 45 L72 6 L74.5 45 Z"/>
+    <path d="M85 44.5 L126 20 L89 49 Z"/>
+    <path d="M91 59 L134 62 L91 65.5 Z"/>
+    <path d="M58 45.5 L16 18 L54 49.5 Z"/>
+    <path d="M52 63 L8 56 L52 69 Z"/>
+  </g>
+  <path d="M14 140 C 24 114, 42 102, 56 97 L48 78 L60 92 L66 88 L78 92 L90 76 L84 96 C 102 102, 116 114, 126 140 Z" fill="#141414" stroke="#d9d9d9" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M60 44 L84 43 L92 56 L87 82 L64 103 L52 72 Z" fill="#141414" stroke="#d9d9d9" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M71 49 L85 64 L69 78 L56 62 Z" fill="#ff2323"/>
+  <circle cx="70.5" cy="63.5" r="6" fill="#0a0a0a"/>
+  <circle cx="70.5" cy="63.5" r="3" fill="none" stroke="#b0b0b0" stroke-width="1"/>
+  <circle cx="71.5" cy="62.5" r="1" fill="#ededed"/>
+</svg>
