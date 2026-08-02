@@ -59,7 +59,7 @@ window.KN = {
       "art/A_Way_Out/A_Way_Out_Img_1.png",
       "art/A_Way_Out/A_Way_Out_Img_2.png",
       "art/A_Way_Out/A_Way_Out_Img_3.png",
-      "https://www.youtube.com/watch?v=OaemT0TlwIo"
+      //"https://www.youtube.com/watch?v=OaemT0TlwIo"
     ]
   },
 
@@ -92,7 +92,7 @@ window.KN = {
       "art/A_Way_Out/A_Way_Out_Img_1.png",
       "art/A_Way_Out/A_Way_Out_Img_2.png",
       "art/A_Way_Out/A_Way_Out_Img_3.png",
-      "https://www.youtube.com/watch?v=OaemT0TlwIo"
+      //"https://www.youtube.com/watch?v=OaemT0TlwIo"
             ]
     }
     ,
@@ -158,7 +158,7 @@ window.KN = {
         "art/A_Way_Out/A_Way_Out_Img_1.png",
         "art/A_Way_Out/A_Way_Out_Img_2.png",
         "art/A_Way_Out/A_Way_Out_Img_3.png",
-        "https://www.youtube.com/watch?v=OaemT0TlwIo"
+        //"https://www.youtube.com/watch?v=OaemT0TlwIo"
       ],
       /* one entry per platform - this becomes the download dropdown.
          put the files in downloads/ and match the names.
