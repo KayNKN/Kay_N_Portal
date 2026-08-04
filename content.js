@@ -150,7 +150,7 @@ window.KN = {
       lockedNote: "no build has been released to subjects yet.",
 
       desc: "[Keep_the_Camera_ON.]",
-      pitch: "Developed by : Kay_N \n Tested by : The Subjects \n A horror Protocol experience where you navigate arround with a camera as you only form of visibility.",
+      pitch: "Developed by : Kay_N \n Tested by : The Subjects \n A horror Protocol experience where your navigate arround with a camera as you only form of visibility.",
       Platforms:"[ windows · /00 MB ] \n [ Linux · /00 MB ]",
       tags: ["Horror"],
       media: [
