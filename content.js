@@ -164,8 +164,8 @@ window.KN = {
          put the files in downloads/ and match the names.
          I delete a line if I'm not shipping for that platform. */
       downloads: [
-        { os: "windows", file: "https://github.com/KayNKN/A_Way_Out/releases/download/Ver_1.0/A_Way_Out-win-v1.0.zip", size: "109_MB" },
-        { os: "linux",   file: "https://github.com/KayNKN/A_Way_Out/releases/download/Ver_1.0/A_Way_Out-linux-v1.0.zip", size: "106_MB" }
+        { os: "windows", file: "https://www.dropbox.com/scl/fi/ikk2mli215oh6vdv0c1im/A_Way_Out-win-v1.0.zip?rlkey=rejwkca46w5my8m0dlme97eg6&st=7p4sd34h&dl=1", size: "109_MB" },
+        { os: "linux",   file: "https://www.dropbox.com/scl/fi/qjuat6jfaz2p3lqj9vmbo/A_Way_Out-linux-v1.0.zip?rlkey=fckij6uuons2otko3ga2un4l1&st=pa6i6czv&dl=1", size: "106_MB" }
       ],
       itch: "#"
     }
