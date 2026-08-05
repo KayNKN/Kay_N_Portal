@@ -151,7 +151,7 @@ window.KN = {
 
       desc: "[Keep_the_Camera_ON.]",
       pitch: "Developed by : Kay_N \n Tested by : The Subjects \n A horror Protocol experience where your navigate arround with a camera as your only form of visibility.",
-      Platforms:"[ windows · /00 MB ] \n [ Linux · /00 MB ]",
+      Platforms:"[ windows · /109_MB ] \n [ Linux · /106_MB ]",
       tags: ["Horror"],
       media: [
         "art/A_Way_Out/A_Way_Out_GIF.gif",
@@ -164,8 +164,8 @@ window.KN = {
          put the files in downloads/ and match the names.
          I delete a line if I'm not shipping for that platform. */
       downloads: [
-        { os: "windows", file: "downloads/Windows/A_Way_Out-win-v1.0", size: "180" },
-        { os: "linux",   file: "downloads/A_Way_Out-linux-v1.0.tar.gz", size: "" }
+        { OS: "windows", file: "downloads/Windows/A_Way_Out-win-v1.0.zip", size: "109_MB" },
+        { OS: "linux",   file: "downloads/Linux/A_Way_Out-linux-v1.0.zip", size: "106_MB" }
       ],
       itch: "#"
     }
