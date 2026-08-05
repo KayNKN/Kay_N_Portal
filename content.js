@@ -145,7 +145,7 @@ window.KN = {
                  "coming soon", downloads ignored
          true  → real download button + itch.io link
          The two lines under it just change the wording.   */
-      released: false,
+      released: true,
       lockedLabel: "⊘ build sealed",
       lockedNote: "no build has been released to subjects yet.",
 
@@ -164,7 +164,7 @@ window.KN = {
          put the files in downloads/ and match the names.
          I delete a line if I'm not shipping for that platform. */
       downloads: [
-        { os: "windows", file: "downloads/A_Way_Out-win-v1.0.zip",     size: "" },
+        { os: "windows", file: "downloads/Windows/A_Way_Out-win-v1.0", size: "180" },
         { os: "linux",   file: "downloads/A_Way_Out-linux-v1.0.tar.gz", size: "" }
       ],
       itch: "#"
