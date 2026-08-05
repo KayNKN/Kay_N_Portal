@@ -145,7 +145,7 @@ window.KN = {
                  "coming soon", downloads ignored
          true  → real download button + itch.io link
          The two lines under it just change the wording.   */
-      released: true,
+      released: false,
       lockedLabel: "⊘ build sealed",
       lockedNote: "no build has been released to subjects yet.",
 
