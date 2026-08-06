@@ -145,13 +145,13 @@ window.KN = {
                  "coming soon", downloads ignored
          true  → real download button + itch.io link
          The two lines under it just change the wording.   */
-      released: false,
+      released: true,
       lockedLabel: "⊘ build sealed",
       lockedNote: "no build has been released to subjects yet.",
 
       desc: "[Keep_the_Camera_ON.]",
       pitch: "Developed by : Kay_N \n Tested by : The Subjects \n A horror Protocol experience where your navigate arround with a camera as your only form of visibility.",
-      Platforms:"[ windows · /109_MB ] \n [ Linux · /106_MB ]",
+      Platforms:"[ windows · /109_MB ] \n [ Linux · /109_MB ]",
       tags: ["Horror"],
       media: [
         "art/A_Way_Out/A_Way_Out_GIF.gif",
@@ -164,8 +164,8 @@ window.KN = {
          put the files in downloads/ and match the names.
          I delete a line if I'm not shipping for that platform. */
       downloads: [
-        { os: "windows", file: "https://www.dropbox.com/scl/fi/ikk2mli215oh6vdv0c1im/A_Way_Out-win-v1.0.zip?rlkey=rejwkca46w5my8m0dlme97eg6&st=7p4sd34h&dl=1", size: "109_MB" },
-        { os: "linux",   file: "https://www.dropbox.com/scl/fi/qjuat6jfaz2p3lqj9vmbo/A_Way_Out-linux-v1.0.zip?rlkey=fckij6uuons2otko3ga2un4l1&st=pa6i6czv&dl=1", size: "106_MB" }
+        { os: "windows", file: "https://www.dropbox.com/scl/fi/sqrr6hq20l2eqbn1puoki/A_Way_Out.zip?rlkey=3eil50ar09utd5ij9tue0iapx&st=sa5rwt61&dl=1"  },
+        { os: "linux",   file: "https://www.dropbox.com/scl/fi/95h6alu2nsqncarhujaqf/A_Way_Out.zip?rlkey=94f5p6hgi7q3k8e8nfq8hpake&st=0vjkdpp9&dl=1" }
       ],
       itch: "#"
     }
@@ -179,9 +179,9 @@ window.KN = {
      so they don't crowd the page.
 
      Wrap a fragment in *stars* to make it red:
-       "core temp *CRITICAL*"                                    */
+       "core temp *CRITICAL* */
   lore: [
-    "PROTOCOL // node 07 online",
+    "PROTOCOL // node 1007 online",
     "camera feed .... nominal",
     "subject count .. rising",
     "*do not turn it off*",
