@@ -151,7 +151,7 @@ window.KN = {
 
       desc: "[Keep_the_Camera_ON.]",
       pitch: "Developed by : Kay_N \n Tested by : The Subjects \n A horror Protocol experience where your navigate arround with a camera as your only form of visibility.",
-      Platforms:"[ windows · /109_MB ] \n [ Linux · /109_MB ]",
+      Platforms:"[ windows · /108_MB ] \n [ Linux · /108_MB ]",
       tags: ["Horror"],
       media: [
         "art/A_Way_Out/A_Way_Out_GIF.gif",
@@ -164,8 +164,8 @@ window.KN = {
          put the files in downloads/ and match the names.
          I delete a line if I'm not shipping for that platform. */
       downloads: [
-        { os: "windows", file: "https://www.dropbox.com/scl/fi/sqrr6hq20l2eqbn1puoki/A_Way_Out.zip?rlkey=3eil50ar09utd5ij9tue0iapx&st=sa5rwt61&dl=1"  },
-        { os: "linux",   file: "https://www.dropbox.com/scl/fi/95h6alu2nsqncarhujaqf/A_Way_Out.zip?rlkey=94f5p6hgi7q3k8e8nfq8hpake&st=0vjkdpp9&dl=1" }
+        { os: "windows", file: "https://www.dropbox.com/scl/fi/nyxnr8ql6u7ij4jgervaw/A_WAY_OUT.zip?rlkey=tpknh9a0k44ce7mpuilpxujoc&st=9q4z9kop&dl=108"  },
+        { os: "linux",   file: "https://www.dropbox.com/scl/fi/eic5azo6f9ly57zorah8c/A_WAY_OUT.zip?rlkey=obbygwj4rd6ryxtyovdf5icis&st=irl03u1k&dl=1" }
       ],
       itch: "#"
     }
