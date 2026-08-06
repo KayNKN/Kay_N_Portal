@@ -747,7 +747,7 @@
   if (mon) {
     var since = KN.logs && KN.logs.length ? daysSince(KN.logs[0].date) : null;
     var rows = [
-      ['<span class="mon__live">status</span>', "in development"],
+      ['<span class="mon__live">status</span>', "Developed"],
       ["designation", '<b id="mon-subj"></b>'],
       ["records", "<b>" + ((KN.logs || []).length) + "</b> transmissions"],
       ["last entry", "<b>" + (since === null ? "-" : agoText(since)) + "</b>"]
