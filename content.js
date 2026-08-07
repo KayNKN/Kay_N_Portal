@@ -47,7 +47,7 @@ window.KN = {
   supabaseUrl: "https://ncmymwanlumssuuexhcy.supabase.co/rest/v1/",
   supabaseKey: "sb_publishable_MVqkk9pja2u9_qPNgf6dhw_KKPXxZ2P",
 
-  steamSoon: true,          /* false + a URL in steam: makes it a real button */
+  //steamSoon: true,          /* false + a URL in steam: makes it a real button */
 
   /* ── current project → HOME page ─────────────────────── */
   project: {
@@ -150,7 +150,7 @@ window.KN = {
       lockedNote: "no build has been released to subjects yet.",
 
       desc: "[Keep_the_Camera_ON.]",
-      pitch: "Developed by : Kay_N \n Tested by : The Subjects \n A horror Protocol experience where your navigate arround with a camera as your only form of visibility.",
+      pitch: "//Developed by : Kay_N \n //Tested by : The Subjects \n \n A horror Protocol experience where your navigate arround with a camera as your only form of visibility.\n \n GOOD TO KNOW : The Camera can only recharge when its turned off. \n \n //Controls// \n  [W][A][S][D] - Movement \n [Mouse] - Look Around \n [Shift] - Sprint \n [Middle Mouse Wheel] - Zoom ",
       Platforms:"[ windows · /108_MB ] \n [ Linux · /108_MB ]",
       tags: ["Horror"],
       media: [
@@ -164,8 +164,8 @@ window.KN = {
          put the files in downloads/ and match the names.
          I delete a line if I'm not shipping for that platform. */
       downloads: [
-        { os: "windows", file: "https://www.dropbox.com/scl/fi/nyxnr8ql6u7ij4jgervaw/A_WAY_OUT.zip?rlkey=tpknh9a0k44ce7mpuilpxujoc&st=9q4z9kop&dl=108"  },
-        { os: "linux",   file: "https://www.dropbox.com/scl/fi/eic5azo6f9ly57zorah8c/A_WAY_OUT.zip?rlkey=obbygwj4rd6ryxtyovdf5icis&st=irl03u1k&dl=1" }
+        { os: "windows", file: "https://www.dropbox.com/scl/fi/nyxnr8ql6u7ij4jgervaw/A_WAY_OUT.zip?rlkey=tpknh9a0k44ce7mpuilpxujoc&st=hvq1c44k&dl=1"  },
+        { os: "linux",   file: "https://www.dropbox.com/scl/fi/eic5azo6f9ly57zorah8c/A_WAY_OUT.zip?rlkey=obbygwj4rd6ryxtyovdf5icis&st=8skfz7it&dl=1" }
       ],
       itch: "#"
     }
