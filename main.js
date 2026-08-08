@@ -650,11 +650,11 @@
   /* ═══ shared chrome from content.js ════════════════════ */
   document.querySelectorAll(".js-tagline").forEach(function (n) { phify(n, KN.tagline || ""); });
   document.querySelectorAll(".js-discord").forEach(function (n) { n.href = KN.discord || "#"; });
-  document.querySelectorAll(".js-itch").forEach(function (n) {
-    n.href = KN.itch || "#";
-    n.target = "_blank";
-    n.rel = "noopener";
-  });
+  //document.querySelectorAll(".js-itch").forEach(function (n) {
+  //  n.href = KN.itch || "#";
+  //  n.target = "_blank";
+  //  n.rel = "noopener";
+  //});
 
   /* top-bar socials: wire the link, or drop the button if there's no
      URL in content.js - better an absent button than a dead one */

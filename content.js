@@ -33,7 +33,7 @@ window.KN = {
   twitter: "https://x.com/Kay_NKN",
   youtube: "https://www.youtube.com/@K4y_N",
   mail: "k4y.nkn@gmail.com",
-  itch: "https://kay-n.itch.io",
+  //itch: "https://kay-n.itch.io",
   steam: "",
 
   /* ── subject registry ──────────────────────────────────
@@ -59,6 +59,7 @@ window.KN = {
       "art/A_Way_Out/A_Way_Out_Img_1.png",
       "art/A_Way_Out/A_Way_Out_Img_2.png",
       "art/A_Way_Out/A_Way_Out_Img_3.png",
+      "https://youtu.be/416h8jhay9w"
       
     ]
   },
@@ -92,7 +93,7 @@ window.KN = {
       "art/A_Way_Out/A_Way_Out_Img_1.png",
       "art/A_Way_Out/A_Way_Out_Img_2.png",
       "art/A_Way_Out/A_Way_Out_Img_3.png",
-      //"https://www
+      "https://youtu.be/416h8jhay9w"
             ]
     }
     ,
@@ -167,7 +168,7 @@ window.KN = {
         { os: "windows", file: "https://www.dropbox.com/scl/fi/nyxnr8ql6u7ij4jgervaw/A_WAY_OUT.zip?rlkey=tpknh9a0k44ce7mpuilpxujoc&st=hvq1c44k&dl=1"  },
         { os: "linux",   file: "https://www.dropbox.com/scl/fi/eic5azo6f9ly57zorah8c/A_WAY_OUT.zip?rlkey=obbygwj4rd6ryxtyovdf5icis&st=8skfz7it&dl=1" }
       ],
-      itch: "https://kay-n.itch.io/a-way-out"
+      
     }
     /* copy the block above to add a game */
   ],
