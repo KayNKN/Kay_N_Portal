@@ -167,7 +167,7 @@ window.KN = {
         { os: "windows", file: "https://www.dropbox.com/scl/fi/nyxnr8ql6u7ij4jgervaw/A_WAY_OUT.zip?rlkey=tpknh9a0k44ce7mpuilpxujoc&st=hvq1c44k&dl=1"  },
         { os: "linux",   file: "https://www.dropbox.com/scl/fi/eic5azo6f9ly57zorah8c/A_WAY_OUT.zip?rlkey=obbygwj4rd6ryxtyovdf5icis&st=8skfz7it&dl=1" }
       ],
-      itch: "#"
+      itch: "https://kay-n.itch.io/a-way-out"
     }
     /* copy the block above to add a game */
   ],
