@@ -150,7 +150,7 @@ window.KN = {
       lockedNote: "no build has been released to subjects yet.",
 
       desc: "[Keep_the_Camera_ON.]",
-      pitch: "//Developed by : Kay_N \n //Tested by : The Subjects \n \n A horror Protocol experience where your navigate arround with a camera as your only form of visibility.\n \n GOOD TO KNOW : The Camera can only recharge when its turned off. \n \n //Controls// \n  [W][A][S][D] - Movement \n [Mouse] - Look Around \n [Shift] - Sprint \n [Middle Mouse Wheel] - Zoom ",
+      pitch: "//Developed by : Kay_N \n //Tested by : The Subjects \n \n A horror Protocol experience where you navigate arround with a camera as your only form of visibility.\n \n GOOD TO KNOW : The Camera can only recharge when its turned off. \n \n //Controls// \n  [W][A][S][D] - Movement \n [Mouse] - Look Around \n [Shift] - Sprint \n [Middle Mouse Wheel] - Zoom ",
       Platforms:"[ windows · /108_MB ] \n [ Linux · /108_MB ]",
       tags: ["Horror"],
       media: [
