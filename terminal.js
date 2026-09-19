@@ -12,11 +12,7 @@
 
   var KN = window.KN || {};
 
-  var who = function () {
-    var id = "";
-    try { id = localStorage.getItem("kn-subject") || ""; } catch (e) {}
-    return (id || "guest").toLowerCase() + "@outpost:~$";
-  };
+  var who = function () { return "anon@outpost:~$"; };
   var dressPrompt = function () {
     var ps = document.querySelector(".term__ps");
     if (ps) ps.textContent = who();
@@ -223,33 +219,11 @@
 
   var CMDS = {
     help: function () {
-      print("commands: <span class='t-acc'>help · play · whoami · subject · date · ls · discord · clear · exit</span>");
+      print("commands: <span class='t-acc'>help · play · whoami · date · ls · discord · clear · exit</span>");
     },
-    logout: function () { print("subjects are not released."); },
     play: function () { startGame(); },
     tetris: function () { startGame(); },
-    whoami: function () {
-      var id = "";
-      try { id = localStorage.getItem("kn-subject") || ""; } catch (e) {}
-      print(id
-        ? "subject <span class='t-acc'>" + id + "</span>. clearance: none. designation permanent."
-        : "unregistered. refresh to receive a designation.");
-    },
-    subject: function () {
-      var id = "", burned = [];
-      try {
-        id = localStorage.getItem("kn-subject") || "";
-        burned = JSON.parse(localStorage.getItem("kn-subject-burned") || "[]");
-      } catch (e) {}
-      if (!id) { print("no designation on file."); return; }
-      print("designation .... <span class='t-acc'>" + id + "</span>");
-      print("status ......... active");
-      print("issued ......... this terminal");
-      if (burned.length > 1) {
-        print("burned here .... " + burned.filter(function (b) { return b !== id; }).join(", "));
-      }
-      print("the designation cannot be changed or surrendered.", "t-dim");
-    },
+    whoami: function () { print("<span class='t-acc'>Anon</span>. Welcome to the outpost."); },
     date: function () { print(new Date().toString() + " <span class='t-dim'>(the outpost keeps its own time)</span>"); },
     ls: function () { print("games/  logs/  art/  <span class='t-dim'>secrets/</span>"); },
     secrets: function () { print("permission denied."); },
@@ -280,7 +254,6 @@
     else print("unknown command: " + escapeText(cmd) + " - try <span class='t-acc'>help</span>");
   });
 
-  document.addEventListener("kn:subject", dressPrompt);
 
   resetOutput();
 })();

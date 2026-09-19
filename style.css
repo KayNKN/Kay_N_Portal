@@ -87,7 +87,6 @@ a:visited { text-decoration-style: dotted; }
   border: 1px solid var(--line);
   background: var(--ink-0);
 }
-html.gated .site-shell { display: none; }
 
 .home-panels {
   display: grid;
@@ -198,103 +197,6 @@ html.gated .site-shell { display: none; }
 #boot pre .b-acc  { color: var(--accent); }
 #boot pre .b-warn { color: var(--accent); }
 #boot pre .b-cur  { color: var(--accent); animation: blink .8s steps(1) infinite; }
-
-#gate { display: none; }
-
-html.gated #gate {
-  position: fixed;
-  inset: 0;
-  z-index: 250;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  background: var(--ink-0);
-  background-image: repeating-linear-gradient(
-    0deg, rgba(255, 255, 255, .022) 0 1px, transparent 1px 3px);
-  transition: opacity .36s;
-}
-html.gated .frame,
-html.gated .statusbar,
-html.gated #boot { display: none !important; }
-
-#gate.gate--out { opacity: 0; pointer-events: none; }
-
-#gate form {
-  width: 100%;
-  max-width: 430px;
-  border: 1px solid var(--line);
-  background: var(--ink-1);
-  padding: 18px 18px 14px;
-  box-shadow: 0 0 0 1px rgba(var(--accent-rgb), .1), 0 24px 60px rgba(0, 0, 0, .6);
-}
-
-#gate-head {
-  font-family: var(--font-ui);
-  font-size: 12px;
-  line-height: 1.75;
-  color: var(--fg-dim);
-  min-height: 12em;
-  white-space: pre-wrap;
-}
-
-.gate__row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 10px;
-  padding: 7px 9px;
-  border: 1px solid var(--line);
-  background: var(--ink-0);
-}
-.gate__ps {
-  color: var(--accent);
-  font-size: 12px;
-  white-space: nowrap;
-  letter-spacing: .06em;
-}
-
-.gate__fix {
-  color: var(--fg-dim);
-  font-size: 14px;
-  letter-spacing: .14em;
-  user-select: none;
-}
-#gate-input {
-  flex: 1;
-  min-width: 0;
-  background: transparent;
-  border: 0;
-  outline: none;
-  color: var(--fg);
-  font: inherit;
-  font-size: 14px;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  caret-color: var(--accent);
-}
-
-.gate__err {
-  min-height: 1.5em;
-  margin-top: 6px;
-  font-size: 11px;
-  color: var(--accent);
-}
-.gate__err:not(:empty)::before { content: "! "; }
-
-.gate__actions { display: flex; gap: 8px; margin-top: 4px; }
-.gate__actions .btn { cursor: pointer; font: inherit; }
-.gate__actions .btn:disabled { opacity: .55; cursor: wait; }
-
-.gate__fine {
-  margin-top: 11px;
-  padding-top: 9px;
-  border-top: 1px dashed var(--line);
-  font-size: 10px;
-  color: var(--fg-dim);
-}
-
-#subject-cell { color: var(--accent); letter-spacing: .06em; }
 
 .statusbar {
   position: relative;

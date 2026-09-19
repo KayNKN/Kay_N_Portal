@@ -185,165 +185,13 @@
     }
   }
 
-  var SUBJ = "kn-subject", BURNED = "kn-subject-burned";
-
-  var readSubject = function () {
-    try { return localStorage.getItem(SUBJ) || ""; } catch (e) { return ""; }
-  };
-  var readBurned = function () {
-    try { return JSON.parse(localStorage.getItem(BURNED) || "[]"); } catch (e) { return []; }
-  };
-  var paintSubject = function (id) {
-    var cell = document.getElementById("subject-cell");
-    if (!cell) return;
-    if (!id) { cell.hidden = true; return; }
-    cell.hidden = false;
-    cell.textContent = "Subject:: " + id;
-    cell.title = "designation " + id + " - permanent";
-  };
-
-  var PREFIX = "SUBJ-";
-  /* I claim names through the database, which enforces uniqueness. */
-  var claimRemote = function (id) {
-
-    var base = (KN.supabaseUrl || "").replace(/\/+$/, "").replace(/\/rest\/v1$/, "");
-    var key = KN.supabaseKey || "";
-    if (!base || !key) return Promise.resolve("down");
-    var headers = {
-      apikey: key,
-      "Content-Type": "application/json",
-      Prefer: "return=minimal"
-    };
-    /* I send the authorization header only for legacy JWT keys. */
-    if (key.indexOf("eyJ") === 0) headers.Authorization = "Bearer " + key;
-    var controller = new AbortController();
-    var timeout = setTimeout(function () { controller.abort(); }, 10000);
-    return fetch(base + "/rest/v1/subjects", {
-      method: "POST",
-      signal: controller.signal,
-      headers: headers,
-      body: JSON.stringify({ id: id })
-    }).then(function (res) {
-      if (res.status === 201 || res.status === 200) return "ok";
-      if (res.status === 409) return "taken";
-      return "down";
-    }).catch(function () { return "down"; }).finally(function () { clearTimeout(timeout); });
-  };
-
-  var checkId = function (raw) {
-    var tail = String(raw || "").trim().toUpperCase().replace(/\s+/g, "_");
-    if (!tail) return { err: "designation required." };
-    if (tail.length < 2) return { err: "too short - 2 characters minimum." };
-    if (tail.length > 12) return { err: "too long - 12 characters maximum." };
-    if (!/^[A-Z0-9_\-]+$/.test(tail)) return { err: "permitted: A-Z 0-9 _ - only." };
-    var id = PREFIX + tail;
-    if (readBurned().indexOf(id) !== -1) {
-      return { err: id + " is burned. it cannot be reissued." };
-    }
-    return { id: id };
-  };
-
-  var gate = document.getElementById("gate");
-  var openGate = function () {
-    if (!gate) return;
-    var head = document.getElementById("gate-head");
-    var input = document.getElementById("gate-input");
-    var err = document.getElementById("gate-err");
-    var form = document.getElementById("gate-form");
-
-    var LINES = [
-      "KN/OS - ACCESS CONTROL",
-      "──────────────────────────────",
-      "unregistered visitor detected.",
-      "everyone who passes through here is",
-      "logged as a subject.",
-      "",
-      "state your designation."
-    ];
-    var still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-    gate.hidden = false;
-    document.body.style.overflow = "hidden";
-
-    var ready = function () {
-      input.focus();
-    };
-    if (still) {
-      head.textContent = LINES.join("\n");
-      ready();
-    } else {
-      var i = 0;
-      var t = setInterval(function () {
-        head.textContent = LINES.slice(0, ++i).join("\n");
-        if (i >= LINES.length) { clearInterval(t); ready(); }
-      }, 90);
-    }
-
-    input.addEventListener("input", function () { err.textContent = ""; });
-
-    var submitBtn = form.querySelector('button[type="submit"]');
-    var busy = false;
-
-    var admit = function (id) {
-      var burned = readBurned();
-      burned.push(id);
-      try {
-        localStorage.setItem(SUBJ, id);
-        localStorage.setItem(BURNED, JSON.stringify(burned));
-      } catch (e2) { /* I keep this registration for the current session if storage is unavailable. */ }
-      paintSubject(id);
-      document.dispatchEvent(new CustomEvent("kn:subject", { detail: id }));
-      gate.classList.add("gate--out");
-      setTimeout(function () {
-        gate.remove();
-
-        document.documentElement.classList.remove("gated");
-        document.body.style.overflow = "";
-        runBoot();
-      }, 380);
-    };
-
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      if (busy) return;
-      busy = true;
-      err.textContent = "";
-      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "checking…"; }
-
-      var res = checkId(input.value);
-      if (res.err) {
-        busy = false;
-        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "register"; }
-        err.textContent = res.err;
-        input.focus();
-        return;
-      }
-
-      claimRemote(res.id).then(function (verdict) {
-        busy = false;
-        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "register"; }
-        if (verdict === "taken") {
-          err.textContent = res.id + " is already assigned to another subject.";
-          input.focus();
-          return;
-        }
-        if (verdict !== "ok") {
-          err.textContent = "registration is unavailable. please check your connection and try again.";
-          input.focus();
-          return;
-        }
-        admit(res.id);
-      });
-    });
-  };
-
-  if (readSubject()) {
-    paintSubject(readSubject());
-    document.documentElement.classList.remove("gated");
-    runBoot();
-  } else {
-    document.documentElement.classList.add("gated");
-    openGate();
-  }
+  /* I clear old registration data from returning browsers. */
+  try {
+    localStorage.removeItem("kn-subject");
+    localStorage.removeItem("kn-subject-burned");
+    sessionStorage.removeItem("kn-entered");
+  } catch (e) {}
+  runBoot();
 
   document.querySelectorAll(".deck").forEach(function (nav) {
     var links = [].slice.call(nav.querySelectorAll("a"));
@@ -1271,7 +1119,7 @@
       info.appendChild(dl);
       info.appendChild(el("p", "dl__note", out
         ? "direct download, no launcher, no account. unzip and run."
-        : (g.lockedNote || "no build has been released to subjects yet.")));
+        : (g.lockedNote || "no build has been released yet.")));
       body.appendChild(info);
       sec.appendChild(body);
       releases.appendChild(sec);

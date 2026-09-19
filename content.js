@@ -3,7 +3,7 @@
 window.KN = {
 
   name: "Kay_N",
-  tagline: "[Welcome_SUBJECTS]",
+  tagline: "[Welcome_ANON]",
 
   /* I change my header artwork here. */
   artwork: {
@@ -18,10 +18,6 @@ window.KN = {
   twitter: "https://x.com/Kay_NKN",
   mail: "k4y.nkn@gmail.com",
   steam: "",
-
-  /* I use only a public Supabase key here. My database policies control access. */
-  supabaseUrl: "https://ncmymwanlumssuuexhcy.supabase.co/rest/v1/",
-  supabaseKey: "sb_publishable_MVqkk9pja2u9_qPNgf6dhw_KKPXxZ2P",
 
   /* I choose the game shown when the homepage opens. */
   project: {
@@ -172,7 +168,7 @@ _Thank you for playing my first game. See you around.`
       released: true,
       releaseDate: "2026-08-08", /* I use YYYY-MM-DD; my newest dated release appears first. */
       lockedLabel: "⊘ build sealed",
-      lockedNote: "no build has been released to subjects yet.",
+      lockedNote: "no build has been released yet.",
 
       desc: "",
       pitch:`//_Developed by: Kay_N
@@ -236,6 +232,6 @@ _Someone has to work around here.
 
   /* I edit my About text here. */
   bio: [
-    "[ Kay_N is a game developer. Always liked Technology and sci-fi, so why not mix both and see what comes out of it. Also produces music for the Games. See you around, Subject. ]",
+    "[ Kay_N is a game developer. Always liked Technology and sci-fi, so why not mix both and see what comes out of it. Also produces music for the Games. See you around, Anon. ]",
   ]
 };
