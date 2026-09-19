@@ -965,14 +965,6 @@
         var icon = el("img", "cart__image");
         icon.src = g.thumbnail; icon.alt = ""; icon.loading = "lazy";
         a.appendChild(icon);
-      } else if (!requireGameModel && title.toLowerCase() === "a_way_out") {
-        var stage = el("span", "pillar-stage");
-        stage.setAttribute("aria-hidden", "true");
-        var canvas = el("canvas", "pillar-canvas");
-        canvas.width = 264; canvas.height = 330;
-        canvas.textContent = "Wireframe pillar";
-        stage.appendChild(canvas);
-        a.appendChild(stage);
       }
       a.appendChild(el("span", "cart__name", title));
       var meta = el("span", "cart__meta");

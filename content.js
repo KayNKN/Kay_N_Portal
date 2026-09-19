@@ -7,7 +7,7 @@ window.KN = {
 
   /* I change my header artwork here. */
   artwork: {
-    tabIcon: "Tab_Logo.png",
+    tabIcon: "Tab_Logo.png?v=20260919",
     mainImage: "art/Main_Logo.png",
     mainVideo: "art/IntroWithoutS.mp4" // I leave this empty to use mainImage.
   },
@@ -113,7 +113,8 @@ WHAT IS NEXT
         "art/DEAD_BAND/DEAD_BAND_GIF.gif",
         "art/DEAD_BAND/DEAD_BAND_Img_1.png",
         "art/DEAD_BAND/DEAD_BAND_Img_2.png",
-        "art/DEAD_BAND/DEAD_BAND_Img_3.png"
+        "art/DEAD_BAND/DEAD_BAND_Img_3.png",
+        "https://youtu.be/P7-rDTA0c1A"
       ]
     },
 
@@ -223,6 +224,7 @@ _Someone has to work around here.
       "art/DEAD_BAND/DEAD_BAND_Img_1.png",
       "art/DEAD_BAND/DEAD_BAND_Img_2.png",
       "art/DEAD_BAND/DEAD_BAND_Img_3.png",
+      "https://youtu.be/P7-rDTA0c1A",
             ],
       downloads: [
         { os: "Windows", file: "https://www.dropbox.com/scl/fi/3jgxysdv98lvhxovdxuva/DEAD_BAND_Win.zip?rlkey=6u32kn329qb99rkc0kizni778&st=vyvf2w7t&dl=1" },
