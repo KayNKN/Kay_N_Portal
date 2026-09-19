@@ -1,14 +1,95 @@
-/* KN/OS - chrome + rendering. content lives in content.js, not here. */
+/* I render the site using content.js. */
 
 (function () {
   "use strict";
 
   var KN = window.KN || {};
+  var logs = (KN.logs || []).slice().sort(function (a, b) {
+    return (Date.parse(b.date) || 0) - (Date.parse(a.date) || 0);
+  });
   var pad = function (n) { return String(n).padStart(2, "0"); };
 
-  /* ═══ boot sequence (homepage, once per session) ═══════
-     Held back until access control is satisfied - an unregistered
-     visitor registers first, then the machine boots. */
+  var artwork = KN.artwork || {};
+  if (artwork.tabIcon) {
+    document.querySelectorAll('link[rel="icon"]').forEach(function (icon) { icon.href = artwork.tabIcon; });
+  }
+  if (artwork.mainImage) {
+    document.querySelectorAll('.v2-logo img').forEach(function (img) { img.src = artwork.mainImage; });
+  }
+  if (artwork.mainVideo) {
+    document.querySelectorAll('.v2-logo img').forEach(function (img) {
+      var video = document.createElement('video');
+      video.autoplay = true;
+      video.muted = true;
+      video.loop = true;
+      video.playsInline = true;
+      video.setAttribute('aria-hidden', 'true');
+      video.poster = img.src;
+      video.src = artwork.mainVideo;
+      img.replaceWith(video);
+    });
+  }
+  var logoDialog;
+  var closeLogo = function () {
+    if (!logoDialog) return;
+    logoDialog.hidden = true;
+    var video = logoDialog.querySelector('video');
+    if (video) video.pause();
+  };
+  document.querySelectorAll('.v2-logo').forEach(function (trigger) {
+    trigger.addEventListener('click', function () {
+      if (!logoDialog) {
+        logoDialog = document.createElement('div');
+        logoDialog.className = 'logo-lightbox';
+        logoDialog.setAttribute('role', 'dialog');
+        logoDialog.setAttribute('aria-modal', 'true');
+        logoDialog.setAttribute('aria-label', 'Expanded Kay_N logo');
+        logoDialog.hidden = true;
+        var panel = document.createElement('div');
+        panel.className = 'logo-lightbox__panel';
+        var close = document.createElement('button');
+        close.className = 'logo-lightbox__close';
+        close.type = 'button';
+        close.setAttribute('aria-label', 'Close expanded logo');
+        close.textContent = '×';
+        close.addEventListener('click', closeLogo);
+        var sourceVideo = trigger.querySelector('video');
+        var image;
+        if (sourceVideo) {
+          image = sourceVideo.cloneNode(true);
+          image.muted = true;
+          image.removeAttribute('aria-hidden');
+          image.setAttribute('aria-label', 'Kay_N logo, expanded');
+        } else {
+          image = document.createElement('img');
+          image.alt = 'Kay_N logo, expanded';
+          image.src = (trigger.querySelector('img') || {}).src || artwork.mainImage || 'Tab_Logo.png';
+        }
+        panel.appendChild(close);
+        panel.appendChild(image);
+        logoDialog.appendChild(panel);
+        logoDialog.addEventListener('click', function (event) { if (event.target === logoDialog) closeLogo(); });
+        document.body.appendChild(logoDialog);
+      }
+      logoDialog.hidden = false;
+      var expandedVideo = logoDialog.querySelector('video');
+      if (expandedVideo) expandedVideo.play().catch(function () {});
+      logoDialog.querySelector('.logo-lightbox__close').focus();
+    });
+  });
+  document.addEventListener('keydown', function (event) { if (event.key === 'Escape') closeLogo(); });
+  var syncNavigation = function () {
+    var page = location.pathname.split('/').pop() || 'index.html';
+    var target = page === 'about.html' && location.hash === '#contact' ? 'contact.html' : page;
+    document.querySelectorAll('.v2-nav a').forEach(function (link) {
+      if (link.getAttribute('href') === target) link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+  };
+  syncNavigation();
+  window.addEventListener('hashchange', syncNavigation);
+  window.addEventListener('pageshow', syncNavigation);
+
   var boot = document.getElementById("boot");
   var runBoot = function () {
     if (!boot || !boot.parentNode) return;
@@ -17,15 +98,13 @@
     try { seen = sessionStorage.getItem("kn-booted") === "1"; } catch (e) {}
     var still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    /* plain boot readout. the counts are real - they come from content.js,
-       so the numbers move when I add a log entry or ship a game. */
     var line = function (label, value, cls) {
       var dots = ".".repeat(Math.max(3, 24 - label.length));
       return label + ' <span class="b-dim">' + dots + "</span> " +
              '<span class="' + (cls || "b-ok") + '">' + value + "</span>";
     };
     var LINES = [
-      '<span class="b-dim">KN/OS 0.1.0 - signal outpost</span>',
+      '<span class="b-dim">KAY_N 2.0</span>',
       '<span class="b-dim">' + "─".repeat(32) + "</span>",
       "",
       line("mount /dev/archive", "ok"),
@@ -64,7 +143,6 @@
     }
   };
 
-  /* ═══ status bar ═══════════════════════════════════════ */
   var clockEl = document.getElementById("clock");
   if (clockEl) {
     var tick = function () {
@@ -75,9 +153,6 @@
     setInterval(tick, 1000);
   }
 
-  /* signal meter - drifts, drops out rarely, always recovers.
-     Runs regardless of reduced-motion: it is a discrete readout,
-     and freezing it reads as broken. */
   var sigEl = document.getElementById("sig-bars");
   if (sigEl) {
     var BARS = 4;
@@ -91,8 +166,8 @@
     paint();
     setInterval(function () {
       var r = Math.random();
-      if (level === 0) level = 2;                    /* it always comes back */
-      else if (r < 0.06) level = 0;                  /* rare dropout */
+      if (level === 0) level = 2;
+      else if (r < 0.06) level = 0;
       else if (r < 0.5) level = Math.max(1, level - 1);
       else if (r < 0.95) level = Math.min(BARS, level + 1);
       paint();
@@ -104,17 +179,12 @@
     try {
       var visits = (parseInt(localStorage.getItem("kn-visits"), 10) || 0) + 1;
       localStorage.setItem("kn-visits", String(visits));
-      counterEl.textContent = "your visits: " + visits;
+      counterEl.textContent = "Visits:: " + visits;
     } catch (e) {
-      counterEl.textContent = "your visits: ?";
+      counterEl.textContent = "Visits:: ?";
     }
   }
 
-  /* ═══ subject registration ═════════════════════════════
-     Permanent, per-browser. No logout by design. Used designations
-     go on a burn list so a dropped one can never be reclaimed.
-     Uniqueness is per-browser only - a static site has no server
-     to check other visitors against. */
   var SUBJ = "kn-subject", BURNED = "kn-subject-burned";
 
   var readSubject = function () {
@@ -128,41 +198,36 @@
     if (!cell) return;
     if (!id) { cell.hidden = true; return; }
     cell.hidden = false;
-    cell.textContent = "subject: " + id;
+    cell.textContent = "Subject:: " + id;
     cell.title = "designation " + id + " - permanent";
   };
 
-  /* the subject types only their own part; SUBJ- is fixed and shown to
-     them in the field, so every designation reads SUBJ-XXXX */
   var PREFIX = "SUBJ-";
-  /* Claim a designation in the shared registry. The id is the table's
-     primary key, so two people racing for the same name is settled by
-     the database itself: the loser gets a 409.
-     "ok" | "taken" | "skip" (not set up) | "down" (unreachable).
-     A registry that is down must never lock anyone out, so "down"
-     falls back to the per-browser checks. */
+  /* I claim names through the database, which enforces uniqueness. */
   var claimRemote = function (id) {
-    /* accept the bare project URL or one that already ends in /rest/v1 */
+
     var base = (KN.supabaseUrl || "").replace(/\/+$/, "").replace(/\/rest\/v1$/, "");
     var key = KN.supabaseKey || "";
-    if (!base || !key) return Promise.resolve("skip");
+    if (!base || !key) return Promise.resolve("down");
     var headers = {
       apikey: key,
       "Content-Type": "application/json",
       Prefer: "return=minimal"
     };
-    /* legacy anon keys are JWTs and also want an Authorization header;
-       the newer sb_publishable_... keys are resolved from apikey alone */
+    /* I send the authorization header only for legacy JWT keys. */
     if (key.indexOf("eyJ") === 0) headers.Authorization = "Bearer " + key;
+    var controller = new AbortController();
+    var timeout = setTimeout(function () { controller.abort(); }, 10000);
     return fetch(base + "/rest/v1/subjects", {
       method: "POST",
+      signal: controller.signal,
       headers: headers,
       body: JSON.stringify({ id: id })
     }).then(function (res) {
       if (res.status === 201 || res.status === 200) return "ok";
       if (res.status === 409) return "taken";
       return "down";
-    }).catch(function () { return "down"; });
+    }).catch(function () { return "down"; }).finally(function () { clearTimeout(timeout); });
   };
 
   var checkId = function (raw) {
@@ -224,13 +289,13 @@
       try {
         localStorage.setItem(SUBJ, id);
         localStorage.setItem(BURNED, JSON.stringify(burned));
-      } catch (e2) { /* private mode: it holds for this session only */ }
+      } catch (e2) { /* I keep this registration for the current session if storage is unavailable. */ }
       paintSubject(id);
       document.dispatchEvent(new CustomEvent("kn:subject", { detail: id }));
       gate.classList.add("gate--out");
       setTimeout(function () {
         gate.remove();
-        /* unlock the site, then let the machine boot */
+
         document.documentElement.classList.remove("gated");
         document.body.style.overflow = "";
         runBoot();
@@ -261,13 +326,16 @@
           input.focus();
           return;
         }
+        if (verdict !== "ok") {
+          err.textContent = "registration is unavailable. please check your connection and try again.";
+          input.focus();
+          return;
+        }
         admit(res.id);
       });
     });
   };
 
-  /* access control first, always. registered visitors go straight to the
-     boot; unregistered ones see nothing of the site until they register. */
   if (readSubject()) {
     paintSubject(readSubject());
     document.documentElement.classList.remove("gated");
@@ -277,9 +345,6 @@
     openGate();
   }
 
-  /* ═══ nav separators ═══════════════════════════════════
-     a drawn rule between each button, added here so the markup
-     stays clean and every page gets it automatically. */
   document.querySelectorAll(".deck").forEach(function (nav) {
     var links = [].slice.call(nav.querySelectorAll("a"));
     links.forEach(function (a, i) {
@@ -292,7 +357,6 @@
     });
   });
 
-  /* ═══ rendering helpers ════════════════════════════════ */
   var DAY = 86400000;
   var daysSince = function (iso) {
     return Math.max(0, Math.round((Date.now() - new Date(iso + "T00:00:00").getTime()) / DAY));
@@ -318,15 +382,7 @@
     node.classList.toggle("ph", isPh(text));
     return node;
   };
-  /* ── media ────────────────────────────────────────────────
-     a media field takes one item or a list of them. each item is
-     either a path/URL string or { src, caption }. the kind is worked
-     out from the file extension, so I never declare it:
-       image  .png .jpg .gif .webp .avif
-       video  .mp4 .webm .mov .m4v
-       audio  .mp3 .wav .ogg .m4a .flac
-       youtube  any youtube.com / youtu.be link
-     more than one item gets a thumbnail strip under the stage. */
+
   var srcOf = function (item) {
     return typeof item === "string" ? item : (item && item.src) || "";
   };
@@ -347,7 +403,6 @@
     return isFinite(s) ? Math.floor(s / 60) + ":" + pad(Math.floor(s % 60)) : "0:00";
   };
 
-  /* audio: built by hand so it matches the terminal instead of the browser */
   var buildAudio = function (src, cap) {
     var wrap = el("div", "aud");
     var audio = document.createElement("audio");
@@ -396,12 +451,9 @@
     return wrap;
   };
 
-  /* Nothing is requested from Google until the visitor clicks.
-     On file:// YouTube refuses to embed (error 153), so there we open
-     the video in a tab instead. Serve over http to test embeds. */
+  /* I load YouTube only after a visitor presses play. */
   var offline = location.protocol === "file:";
-  /* once a visitor has started a video, expanding it should carry on
-     playing rather than hand them a fresh unplayed panel */
+  /* I keep the same video player when expanding it. */
   var started = {};
 
   var ytFrame = function (id, cap, autoplay) {
@@ -433,8 +485,7 @@
     btn.appendChild(el("span", "yt__tri", "▶"));
     btn.appendChild(el("span", "yt__lbl", cap || "play video"));
     btn.addEventListener("click", function (ev) {
-      /* this button removes itself below, so keep the click from
-         reaching any collapsible parent once it is detached */
+
       ev.stopPropagation();
       if (offline) {
         window.open("https://www.youtube.com/watch?v=" + id, "_blank", "noopener");
@@ -473,10 +524,6 @@
     return box;
   };
 
-  /* ── maximise ─────────────────────────────────────────────
-     A gallery grows to fill the screen in place. Nothing is copied
-     or reparented, because moving an iframe reloads it and a second
-     player would leave the first one running underneath. */
   var maxed = null;
 
   var unmaximise = function () {
@@ -498,7 +545,7 @@
     if (btn) { btn.textContent = "✕"; btn.title = "close"; }
   };
 
-  /* capture phase so the tetris handler never sees these keys */
+  /* I handle gallery keys before the terminal game can receive them. */
   document.addEventListener("keydown", function (e) {
     if (!maxed) return;
     if (e.key === "Escape") unmaximise();
@@ -509,14 +556,11 @@
     e.stopPropagation();
   }, true);
 
-  /* run once the browser has a spare moment */
   var idle = function (fn) {
     if (window.requestIdleCallback) requestIdleCallback(fn, { timeout: 2500 });
     else setTimeout(fn, 900);
   };
 
-  /* hold off building a gallery until it is near the viewport, so a page
-     of clips does not pull every file down at once */
   var whenVisible = function (node, run) {
     if (!("IntersectionObserver" in window)) { run(); return; }
     var io = new IntersectionObserver(function (entries) {
@@ -526,12 +570,16 @@
   };
 
   var mediaInto = function (holder, media, alt) {
-           /* "" keeps the empty slot */
+    var request = (holder.__mediaRequest || 0) + 1;
+    holder.__mediaRequest = request;
+
     var items = (Array.isArray(media) ? media : [media]).filter(function (m) {
       return srcOf(m);
     });
     if (!items.length) return;
-    whenVisible(holder, function () { buildGallery(holder, items, alt); });
+    whenVisible(holder, function () {
+      if (holder.__mediaRequest === request) buildGallery(holder, items, alt);
+    });
   };
 
   var buildGallery = function (holder, items, alt) {
@@ -543,7 +591,6 @@
     var at = 0;
     var thumbs = [];
 
-    /* expand button - always available, whatever the media is */
     var expand = el("button", "gal__expand", "⤢");
     expand.type = "button";
     expand.title = "expand";
@@ -562,16 +609,17 @@
 
     var show = function (i) {
       at = (i + items.length) % items.length;
+      stage.querySelectorAll("audio, video").forEach(function (player) { player.pause(); });
       stage.innerHTML = "";
       stage.dataset.kind = kindOf(srcOf(items[at]));
       var node = buildOne(items[at], alt);
       stage.appendChild(node);
-      /* clicking a still image blows it up */
+
       var img = node.tagName === "IMG" ? node : node.querySelector && node.querySelector("img");
       if (img) {
         img.classList.add("is-zoomable");
         img.addEventListener("click", function () { maximise(gal); });
-        /* now that this item is on screen, give its thumb a real preview */
+
         var tb = thumbs[at];
         if (tb && !tb.style.backgroundImage) {
           tb.style.backgroundImage = 'url("' + srcOf(items[at]).replace(/"/g, "%22") + '")';
@@ -585,15 +633,18 @@
         stage.appendChild(count);
         count.textContent = (at + 1) + " / " + items.length;
       }
-      thumbs.forEach(function (t, j) { t.classList.toggle("is-on", at === j); });
+      thumbs.forEach(function (t, j) {
+        t.classList.toggle("is-on", at === j);
+        t.setAttribute("aria-pressed", String(at === j));
+      });
     };
 
     prev.addEventListener("click", function (e) { e.stopPropagation(); show(at - 1); });
     next.addEventListener("click", function (e) { e.stopPropagation(); show(at + 1); });
-    /* let the keyboard drive this gallery while it is maximised */
+
     gal.__prev = function () { show(at - 1); };
     gal.__next = function () { show(at + 1); };
-    /* clicking the backdrop around the media closes the maximised view */
+
     gal.addEventListener("click", function (e) {
       if (e.target === gal && gal.classList.contains("is-max")) unmaximise();
     });
@@ -607,10 +658,9 @@
         var t = el("button", "gal__thumb gal__thumb--" + k);
         t.type = "button";
         t.title = capOf(item) || src.split("/").pop();
+        t.setAttribute("aria-label", "Show media " + (i + 1) + ": " + t.title);
         if (k === "image") {
-          /* previews cost a full-size download, so the active one loads
-             now and the rest wait until the browser is idle - they show
-             up on their own without holding up first paint */
+          /* I load the first preview now and defer the rest until the browser is idle. */
           if (i === 0) {
             t.style.backgroundImage = 'url("' + src.replace(/"/g, "%22") + '")';
           } else {
@@ -647,22 +697,14 @@
     return li;
   };
 
-  /* ═══ shared chrome from content.js ════════════════════ */
   document.querySelectorAll(".js-tagline").forEach(function (n) { phify(n, KN.tagline || ""); });
   document.querySelectorAll(".js-discord").forEach(function (n) { n.href = KN.discord || "#"; });
-  //document.querySelectorAll(".js-itch").forEach(function (n) {
-  //  n.href = KN.itch || "#";
-  //  n.target = "_blank";
-  //  n.rel = "noopener";
-  //});
 
-  /* top-bar socials: wire the link, or drop the button if there's no
-     URL in content.js - better an absent button than a dead one */
   [["js-twitter", KN.twitter], ["js-youtube", KN.youtube]].forEach(function (pair) {
     document.querySelectorAll("." + pair[0]).forEach(function (n) {
       var url = (pair[1] || "").trim();
       if (!url || url === "#") {
-        /* take its separator with it, or we leave a dangling rule */
+
         var sep = n.previousElementSibling;
         if (sep && sep.classList.contains("deck__sep")) sep.remove();
         n.remove();
@@ -671,175 +713,301 @@
       n.href = url;
     });
   });
-  /* the address is shown, never linked - no mailto, nothing to click */
+
   document.querySelectorAll(".js-mail").forEach(function (n) {
-    n.textContent = (KN.mail || "").replace(/^mailto:/i, "");
+    var address = (KN.mail || "").replace(/^mailto:/i, "").trim();
+    n.textContent = address;
+    n.href = "mailto:" + address;
   });
 
   var lastTx = document.getElementById("last-tx");
-  if (lastTx && KN.logs && KN.logs.length) {
-    lastTx.textContent = agoText(daysSince(KN.logs[0].date));
+  if (lastTx && logs.length) {
+    lastTx.textContent = agoText(daysSince(logs[0].date));
   }
 
-  /* ═══ lore streams ═════════════════════════════════════
-     Four columns of system chatter drifting through the margins.
-     Each column gets its own shuffled order, direction and speed,
-     so nothing ever lines up. The list is doubled inside each
-     column and the animation travels exactly -50%, which makes
-     the loop seamless. */
-  var bgfx = document.querySelector(".bgfx");
-  if (bgfx && (KN.lore || []).length) {
-    var LORE = KN.lore.slice();
-    var mark = function (s) {
-      /* *starred* fragments come out red */
-      return String(s)
-        .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-        .replace(/\*([^*]+)\*/g, "<i>$1</i>");
-    };
-    var shuffled = function () {
-      var a = LORE.slice();
-      for (var i = a.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var t = a[i]; a[i] = a[j]; a[j] = t;
-      }
-      return a;
-    };
-    /* The loop travels -50%, so half a column must cover the screen or
-       the tail leaves a gap. Repeat the list until it does, then double. */
-    var LINE_H = 25;                                   /* 10px × 2.5 line-height */
-    var tall = Math.max(window.innerHeight, screen.height || 0, 900) * 1.3;
-    var perHalf = Math.max(1, Math.ceil(tall / (LORE.length * LINE_H)));
-
-    [
-      { cls: "stream--l1", dur: 74, down: false },
-      { cls: "stream--l2", dur: 96, down: true },
-      { cls: "stream--r1", dur: 82, down: true },
-      { cls: "stream--r2", dur: 110, down: false }
-    ].forEach(function (col) {
-      var half = [];
-      for (var c = 0; c < perHalf; c++) half = half.concat(shuffled());
-      var col_ = el("div", "stream " + col.cls + (col.down ? " stream--down" : ""));
-      col_.innerHTML = half.concat(half).map(function (l) {
-        return "<div>" + mark(l) + "</div>";
-      }).join("");
-      /* keep the speed per-pixel consistent however long the column is */
-      col_.style.animationDuration = (col.dur * perHalf) + "s";
-      col_.style.animationDelay = "-" + Math.floor(Math.random() * col.dur) + "s";
-      bgfx.appendChild(col_);
-    });
-  }
-
-  /* ═══ homepage ═════════════════════════════════════════ */
   var homeLog = document.getElementById("home-log");
-  if (homeLog && KN.logs) {
-    KN.logs.slice(0, 5).forEach(function (e) { homeLog.appendChild(logRow(e)); });
+  if (homeLog) {
+    logs.slice(0, 5).forEach(function (e) { homeLog.appendChild(logRow(e)); });
+  }
+
+  var musicLibrary = document.getElementById("music-library");
+  var musicPlayer = document.getElementById("music-player");
+  if (musicLibrary && musicPlayer && Array.isArray(KN.music)) {
+    var musicCards = [];
+    var activeMusicAudio;
+    var cleanName = function (value) { return String(value || "").replace(/^\s*\[\s*|\s*\]\s*$/g, "").trim(); };
+    /* I use each game's release date to order its soundtrack. */
+    var musicItems = orderedGames(KN.music.map(function (item) {
+      var game = (KN.games || []).find(function (game) {
+        return cleanName(game.title).toLowerCase() === cleanName(item.game).toLowerCase();
+      });
+      return Object.assign({}, item, {
+        released: game ? game.released !== false : item.released === true,
+        releaseDate: game ? game.releaseDate : item.releaseDate
+      });
+    })).map(function (entry) { return entry.game; });
+    var selectMusic = function (item, index) {
+      if (activeMusicAudio) activeMusicAudio.pause();
+      musicCards.forEach(function (card, i) { card.setAttribute("aria-pressed", String(i === index)); });
+      musicPlayer.replaceChildren();
+      var title = item.title || cleanName(item.game) + " OST";
+      musicPlayer.appendChild(el("h3", "music-player__title", title));
+      if (Array.isArray(item.tracks) && item.tracks.length) {
+        var header = el("div", "music-track-heading");
+        ["#", "TITLE"].forEach(function (label) { header.appendChild(el("span", "", label)); });
+        header.setAttribute("aria-hidden", "true");
+        musicPlayer.appendChild(header);
+        var trackList = el("ol", "music-tracks");
+        var player = document.createElement("audio");
+        player.preload = "none";
+        activeMusicAudio = player;
+        var selectedTrack = item.tracks.findIndex(function (track) { return !!track.audio; });
+        var trackButtons = [];
+        var bar = el("div", "music-controls");
+        var toggle = el("button", "music-toggle", "▶");
+        toggle.type = "button";
+        toggle.disabled = selectedTrack < 0;
+        var seek = document.createElement("input");
+        seek.type = "range";
+        seek.className = "music-seek";
+        seek.min = "0";
+        seek.max = "100";
+        seek.step = "0.1";
+        seek.value = "0";
+        seek.disabled = true;
+        seek.setAttribute("aria-label", "Seek within track");
+        var syncSeek = function () {
+          var duration = player.duration;
+          if (!Number.isFinite(duration) || duration <= 0) duration = Number((item.tracks[selectedTrack] || {}).duration);
+          var hasDuration = Number.isFinite(duration) && duration > 0;
+          seek.disabled = !hasDuration;
+          seek.max = hasDuration ? String(duration) : "100";
+          seek.value = String(hasDuration ? player.currentTime || 0 : 0);
+          var progress = hasDuration ? Math.min(100, Math.max(0, Number(seek.value) / duration * 100)) : 0;
+          seek.style.setProperty("--played", progress + "%");
+        };
+        var status = el("p", "music-status");
+        status.setAttribute("role", "status");
+        var syncPlayback = function () {
+          var track = item.tracks[selectedTrack];
+          toggle.textContent = player.paused ? "▶" : "Ⅱ";
+          toggle.setAttribute("aria-label", (player.paused ? "Play " : "Pause ") + (track ? track.title : "soundtrack"));
+          trackButtons.forEach(function (button, i) { button.setAttribute("aria-pressed", String(i === selectedTrack)); });
+        };
+        var playTrack = function (trackIndex) {
+          var track = item.tracks[trackIndex];
+          if (!track || !track.audio) return;
+          if (selectedTrack !== trackIndex || !player.getAttribute("src")) {
+            player.pause();
+            selectedTrack = trackIndex;
+            player.src = track.audio;
+            seek.value = "0";
+            seek.disabled = true;
+            seek.style.setProperty("--played", "0%");
+          } else if (!player.paused) {
+            player.pause();
+            return;
+          }
+          status.textContent = "";
+          syncPlayback();
+          player.play().catch(function () { status.textContent = "Unable to play this track. Try again."; syncPlayback(); });
+        };
+        item.tracks.forEach(function (track, trackIndex) {
+          var row = el("li", "");
+          var button = el("button", "music-track");
+          button.type = "button";
+          button.disabled = !track.audio;
+          var trackTitle = track.title || "Track " + String(trackIndex + 1).padStart(2, "0");
+          button.setAttribute("aria-label", trackTitle + (track.audio ? " — play or pause" : " — coming soon"));
+          button.appendChild(el("span", "music-track__number", String(trackIndex + 1).padStart(2, "0")));
+          var label = el("span", "music-track__label");
+          label.appendChild(el("span", "music-track__title", trackTitle));
+          label.appendChild(el("span", "music-track__artist", item.artist || "Kay_N"));
+          button.appendChild(label);
+          button.addEventListener("click", function () { playTrack(trackIndex); });
+          trackButtons.push(button);
+          row.appendChild(button);
+          trackList.appendChild(row);
+        });
+        toggle.addEventListener("click", function () { playTrack(selectedTrack); });
+        seek.addEventListener("input", function () {
+          if (!seek.disabled) {
+            player.currentTime = Number(seek.value);
+            syncSeek();
+          }
+        });
+        ["loadedmetadata", "durationchange", "timeupdate"].forEach(function (event) { player.addEventListener(event, syncSeek); });
+        ["play", "pause", "ended"].forEach(function (event) { player.addEventListener(event, syncPlayback); });
+        player.addEventListener("error", function () { status.textContent = "Unable to load this track. Try again."; });
+        syncPlayback();
+        bar.appendChild(toggle);
+        bar.appendChild(seek);
+        musicPlayer.appendChild(trackList);
+        musicPlayer.appendChild(bar);
+        musicPlayer.appendChild(status);
+        musicPlayer.appendChild(player);
+      } else if (item.audio) {
+        var audio = document.createElement("audio");
+        activeMusicAudio = audio;
+        audio.controls = true;
+        audio.preload = "metadata";
+        audio.src = item.audio;
+        audio.setAttribute("aria-label", title + " audio player");
+        musicPlayer.appendChild(audio);
+      } else {
+        musicPlayer.appendChild(el("p", "music-player__empty", item.note || "I have not uploaded this soundtrack yet."));
+      }
+    };
+    musicItems.forEach(function (item, index) {
+      var card = el("button", "music-card");
+      card.type = "button";
+      card.setAttribute("aria-pressed", "false");
+      card.setAttribute("aria-label", "Load " + (item.title || cleanName(item.game) + " soundtrack"));
+      var cover = el("span", "music-cover");
+      if (item.model) {
+        var model = document.createElement("model-viewer");
+        model.className = "music-model";
+        model.src = item.model;
+        model.setAttribute("alt", item.title || "Soundtrack CD model");
+        model.setAttribute("camera-orbit", item.modelOrbit || "30deg 75deg auto");
+        model.setAttribute("rotation-per-second", item.modelRotation || "18deg");
+        model.setAttribute("auto-rotate", "");
+        model.setAttribute("disable-zoom", "");
+        model.setAttribute("interaction-prompt", "none");
+        cover.appendChild(model);
+      } else {
+        cover.appendChild(el("span", "music-model-space", "MODEL PENDING"));
+      }
+      card.appendChild(cover);
+      card.appendChild(el("span", "music-card__label", item.game || item.title || "Untitled"));
+      card.addEventListener("click", function () { selectMusic(item, index); });
+      musicCards.push(card);
+      musicLibrary.appendChild(card);
+    });
+    if (musicCards.length) selectMusic(musicItems[0], 0);
   }
 
   var wbName = document.getElementById("wb-name");
-  if (wbName && KN.project) {
-    wbName.textContent = KN.project.name || "UNTITLED";
-    phify(document.getElementById("wb-pitch"), KN.project.pitch || "");
-    mediaInto(document.getElementById("wb-media"), KN.project.media, KN.project.name);
-  }
 
-  /* protocol monitor - gives the workbench column something to say */
-  var mon = document.getElementById("wb-monitor");
-  if (mon) {
-    var since = KN.logs && KN.logs.length ? daysSince(KN.logs[0].date) : null;
-    var rows = [
-      ['<span class="mon__live">status</span>', "Developed"],
-      ["designation", '<b id="mon-subj"></b>'],
-      ["records", "<b>" + ((KN.logs || []).length) + "</b> transmissions"],
-      ["last entry", "<b>" + (since === null ? "-" : agoText(since)) + "</b>"]
-    ];
-    mon.innerHTML =
-      '<div class="mon__title">protocol monitor</div>' +
-      rows.map(function (r) {
-        return '<div class="mon__row">' + r[0] +
-               ' <span class="mon__dots">·····</span> ' + r[1] + "</div>";
-      }).join("") +
-      '<div class="mon__foot"><span class="mon__rot" id="mon-rot"></span></div>';
-
-    /* this panel is built before the gate is answered, so pick the
-       designation up again once one has been issued */
-    var monSubj = document.getElementById("mon-subj");
-    var showSubj = function () {
-      monSubj.textContent = readSubject() || "UNREGISTERED";
-    };
-    showSubj();
-    document.addEventListener("kn:subject", showSubj);
-
-    /* the bottom line cycles through the same lore as the margins */
-    var rot = document.getElementById("mon-rot");
-    var pool = (KN.lore || []).slice();
-    if (rot && pool.length) {
-      var at = Math.floor(Math.random() * pool.length);
-      var say = function () {
-        rot.innerHTML = String(pool[at % pool.length])
-          .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-          .replace(/\*([^*]+)\*/g, "<i>$1</i>");
-        at++;
-      };
-      say();
-      setInterval(function () {
-        rot.classList.add("is-swap");
-        setTimeout(function () { say(); rot.classList.remove("is-swap"); }, 400);
-      }, 4200);
+  var modelViewer = function (g, name, interactive) {
+    var model = el("model-viewer", interactive ? "display-model" : "game-model");
+    model.setAttribute("src", g.model);
+    model.setAttribute("alt", name + " 3D model");
+    model.setAttribute("auto-rotate", "");
+    model.setAttribute("auto-rotate-delay", "0");
+    model.setAttribute("rotation-per-second", g.modelRotation || "18deg");
+    model.setAttribute("camera-orbit", g.modelOrbit || "30deg 78deg auto");
+    model.setAttribute("environment-image", "neutral");
+    model.setAttribute("shadow-intensity", "0");
+    model.setAttribute("interaction-prompt", "none");
+    model.setAttribute("loading", "lazy");
+    if (interactive) {
+      model.setAttribute("camera-controls", "");
+      model.setAttribute("touch-action", "pan-y");
+    } else {
+      model.setAttribute("aria-hidden", "true");
+      model.setAttribute("tabindex", "-1");
     }
+    return model;
+  };
+
+  /* I sort games and soundtracks by release date, keeping upcoming entries last. */
+  function orderedGames(games) {
+    var releaseTime = function (game) {
+      var time = Date.parse(game.releaseDate || "");
+      return Number.isFinite(time) ? time : 0;
+    };
+    return games.map(function (game, index) { return {game: game, index: index}; }).sort(function (a, b) {
+      var aReleased = a.game.released !== false;
+      var bReleased = b.game.released !== false;
+      if (aReleased !== bReleased) return aReleased ? -1 : 1;
+      return (aReleased ? releaseTime(b.game) - releaseTime(a.game) : 0) || a.index - b.index;
+    });
   }
 
-  var shelf = document.getElementById("Protocols-shelf");
+  var shelf = document.getElementById("games-shelf");
+  var gameButtons = [];
+  var requireGameModel = shelf && shelf.dataset.requireModel === "true";
   if (shelf && KN.games) {
-    KN.games.forEach(function (g) {
+    orderedGames(KN.games).forEach(function (entry) {
+      var g = entry.game;
+      var index = entry.index;
+
+      if (requireGameModel && !g.model) {
+        var pending = el("li");
+        var holder = el("span", "cart cart--pending");
+        var space = el("span", "cart__model-space");
+        space.setAttribute("aria-hidden", "true");
+        holder.appendChild(space);
+        holder.appendChild(el("span", "cart__name", String(g.title || g.name || "UNTITLED").replace(/^\s*\[\s*|\s*\]\s*$/g, "").trim()));
+        pending.appendChild(holder);
+        shelf.appendChild(pending);
+        return;
+      }
       var li = el("li");
-      var a = el("a", "cart");
-      a.href = "games.html";
-      a.appendChild(el("span", "cart__ridges"));
-      var lab = el("span", "cart__label");
-      lab.appendChild(el("span", "cart__year", g.year || ""));
-      lab.appendChild(phify(el("span", "cart__name"), g.title));
-      lab.appendChild(phify(el("span", "cart__desc"), g.desc || ""));
-      var tags = el("span", "cart__tags");
-      (g.tags || []).forEach(function (t) { tags.appendChild(el("i", null, t)); });
-      lab.appendChild(tags);
-      a.appendChild(lab);
+      var a = el("button", "cart");
+      a.type = "button";
+      a.setAttribute("aria-controls", "display");
+      a.setAttribute("aria-pressed", "false");
+      a.addEventListener("click", function () { selectGame(g, index); });
+      gameButtons[index] = a;
+      var title = String(g.title || g.name || "UNTITLED").replace(/^\s*\[\s*|\s*\]\s*$/g, "").trim();
+      a.setAttribute("aria-label", "Load " + title);
+      if (g.model) {
+        var tileModel = modelViewer(g, title, false);
+        a.appendChild(tileModel);
+        var modelState = el("span", "cart__model-state", "loading…");
+        modelState.setAttribute("aria-hidden", "true");
+        tileModel.addEventListener("load", function () { modelState.hidden = true; });
+        tileModel.addEventListener("error", function () { modelState.textContent = "model unavailable"; });
+        a.appendChild(modelState);
+      } else if (g.thumbnail) {
+        var icon = el("img", "cart__image");
+        icon.src = g.thumbnail; icon.alt = ""; icon.loading = "lazy";
+        a.appendChild(icon);
+      } else if (!requireGameModel && title.toLowerCase() === "a_way_out") {
+        var stage = el("span", "pillar-stage");
+        stage.setAttribute("aria-hidden", "true");
+        var canvas = el("canvas", "pillar-canvas");
+        canvas.width = 264; canvas.height = 330;
+        canvas.textContent = "Wireframe pillar";
+        stage.appendChild(canvas);
+        a.appendChild(stage);
+      }
+      a.appendChild(el("span", "cart__name", title));
+      var meta = el("span", "cart__meta");
+      meta.appendChild(el("span", "cart__year", g.year || ""));
+      meta.appendChild(el("span", "cart__state"));
+      a.appendChild(meta);
       li.appendChild(a);
       shelf.appendChild(li);
     });
-    /* waiting slots - count and wording both come from content.js */
+
     var d = KN.Protocols || {};
-    var slots = d.emptySlots === undefined ? 1 : d.emptySlots;
+    var minimum = Number(shelf.dataset.minSlots) || 0;
+    var slots = Math.max(d.emptySlots || 0, minimum - shelf.children.length);
     for (var s = 0; s < slots; s++) {
       var li2 = el("li");
-      var empty = el("span", "cart cart--empty");
-      empty.appendChild(el("span", "cart__ridges"));
-      var lab2 = el("span", "cart__label");
-      lab2.appendChild(el("span", "cart__year", d.emptyYear || "SOON"));
-      lab2.appendChild(el("span", "cart__name", d.emptyTitle || "empty slot"));
-      lab2.appendChild(el("span", "cart__desc", d.emptyNote || "the next one goes here"));
-      empty.appendChild(lab2);
+      var empty = el("span", "cart cart--pending cart--unknown");
+      var blankModel = el("span", "cart__model-space");
+      blankModel.setAttribute("aria-hidden", "true");
+      empty.appendChild(blankModel);
+      empty.appendChild(el("span", "cart__name", d.emptyTitle || "???"));
       li2.appendChild(empty);
       shelf.appendChild(li2);
     }
   }
 
-  /* ═══ log archive page ═════════════════════════════════
-     Each entry is its own dropdown. The panel lives inside that
-     entry's <li>, so entries can never show each other's content.
-     Contents build on first open. */
   var archiveRow = function (entry) {
     var li = logRow(entry);
     var detailed = !!(entry.desc || entry.media);
 
-    /* a caret column on every row - empty when there is nothing to
-       open - so the dates stay aligned all the way down */
     var caret = el("span", "log__caret", detailed ? "▸" : "");
     li.insertBefore(caret, li.firstChild);
     if (!detailed) return li;
 
     li.classList.add("is-expandable");
-    /* with no real link to follow, clicking the title should open the
-       entry instead of navigating */
+
     var link = li.querySelector(".log__link");
     if (link && !entry.url) link.removeAttribute("href");
 
@@ -869,10 +1037,7 @@
     li.setAttribute("aria-expanded", "false");
     li.tabIndex = 0;
     li.addEventListener("click", function (ev) {
-      /* Real links and anything inside the open panel behave normally.
-         Walk the dispatch path rather than the live DOM: controls that
-         replace themselves (the video play button) are already detached
-         by the time this runs, and closest() would miss them. */
+      /* I inspect the click path so replaced media controls do not collapse the entry. */
       var path = (ev.composedPath && ev.composedPath()) || [];
       for (var i = 0; i < path.length; i++) {
         var n = path[i];
@@ -890,9 +1055,9 @@
   };
 
   var archive = document.getElementById("archive");
-  if (archive && KN.logs) {
+  if (archive) {
     var year = null, list = null;
-    KN.logs.forEach(function (e) {
+    logs.forEach(function (e) {
       var y = e.date.slice(0, 4);
       if (y !== year) {
         year = y;
@@ -904,12 +1069,6 @@
     });
   }
 
-  /* ── downloads ────────────────────────────────────────────
-     A game can ship one build or several. Accepts either:
-       download:  "downloads/game.zip"                      (one)
-       downloads: { windows: "...zip", linux: "...tar.gz" }  (menu)
-       downloads: [ { os:"windows", file:"...", size:"240 MB" }, ... ]
-     One build renders a plain button; several render a dropdown. */
   var buildList = function (g) {
     var out = [];
     var d = g.downloads;
@@ -954,7 +1113,7 @@
       btn.setAttribute("aria-expanded", "false");
     };
     var open = function () {
-      /* only one menu open at a time */
+
       document.querySelectorAll(".dlmenu__list").forEach(function (o) { o.hidden = true; });
       list.hidden = false;
       btn.setAttribute("aria-expanded", "true");
@@ -974,7 +1133,90 @@
     return wrap;
   };
 
-  /* ═══ games page ═══════════════════════════════════════ */
+  var gameName = function (value) {
+    return String(value || "").replace(/^\s*\[\s*|\s*\]\s*$/g, "").trim();
+  };
+  var switchTimer = 0;
+  var selectGame = function (g, index) {
+    if (!wbName) return;
+    var displayPanel = document.getElementById("display");
+    if (displayPanel && displayPanel.classList && typeof displayPanel.classList.add === "function") {
+      displayPanel.classList.remove("is-switching");
+
+      void displayPanel.offsetWidth;
+      displayPanel.classList.add("is-switching");
+      clearTimeout(switchTimer);
+      switchTimer = setTimeout(function () { displayPanel.classList.remove("is-switching"); }, 420);
+    }
+    var name = gameName(g.title || g.name) || "UNTITLED";
+    var released = g.released !== false;
+    var status = released ? "released" : "in development";
+    wbName.textContent = name;
+    var gameInfo = document.getElementById("game-info");
+    if (gameInfo) gameInfo.hidden = false;
+    document.getElementById("display-status").textContent = status;
+    gameButtons.forEach(function (button, i) {
+      if (button) button.setAttribute("aria-pressed", String(i === index));
+    });
+
+    var media = Array.isArray(g.media) ? g.media.slice() : [g.media];
+    // I keep each project trailer with its own game.
+    var project = KN.project || {};
+    if (gameName(project.name).toLowerCase() === name.toLowerCase()) {
+      var extras = Array.isArray(project.media) ? project.media : [project.media];
+      extras.forEach(function (item) {
+        if (srcOf(item) && !media.some(function (existing) { return srcOf(existing) === srcOf(item); })) media.push(item);
+      });
+    }
+    var holder = document.getElementById("wb-media");
+    if (maxed && holder.contains(maxed)) unmaximise();
+    holder.querySelectorAll("audio, video").forEach(function (player) { player.pause(); });
+    holder.replaceChildren(el("div", "artslot", media.some(srcOf) ? "loading media…" : "no media yet"));
+    mediaInto(holder, media, name);
+
+    var builds = buildList(g);
+    var actions = document.getElementById("display-actions");
+    actions.replaceChildren();
+    if (released) {
+      builds.forEach(function (build) {
+        var link = el("a", "btn btn--dl", "↓ " + build.os);
+        link.href = build.file;
+        link.setAttribute("download", "");
+        link.setAttribute("aria-label", "Download " + name + " for " + build.os);
+        actions.appendChild(link);
+      });
+      [["itch.io", g.itch], ["steam", g.steam]].forEach(function (store) {
+        if (!store[1] || store[1] === "#") return;
+        var link = el("a", "btn", store[0]);
+        link.href = store[1]; link.target = "_blank"; link.rel = "noopener";
+        actions.appendChild(link);
+      });
+    } else {
+      actions.appendChild(el("span", "btn btn--locked", g.lockedLabel || "coming soon"));
+    }
+    var logLink = el("a", "btn", "devlog");
+    logLink.href = g.devlog || "log.html";
+    actions.appendChild(logLink);
+
+    var specs = document.getElementById("display-specs");
+    specs.textContent = [g.version, g.specs || g.platforms || g.Platforms].filter(Boolean).join("\n");
+    specs.hidden = !specs.textContent;
+    var details = document.getElementById("display-details");
+    details.open = false;
+    details.hidden = (!g.pitch || g.pitch === g.desc) && !specs.textContent;
+    document.getElementById("display-description").textContent = g.pitch || "";
+  };
+  if (wbName) {
+    var games = KN.games || [];
+    var onlyModels = typeof requireGameModel !== "undefined" && requireGameModel;
+    var first = games.findIndex(function (g) {
+      return (!onlyModels || g.model) && gameName(g.title || g.name).toLowerCase() === gameName((KN.project || {}).name).toLowerCase();
+    });
+    if (first < 0) first = games.findIndex(function (g) { return !onlyModels || g.model; });
+    if (first >= 0) selectGame(games[first], first);
+    else if (!onlyModels) selectGame(Object.assign({released: false}, KN.project || {}), -1);
+  }
+
   var releases = document.getElementById("releases");
   if (releases && KN.games) {
     KN.games.forEach(function (g) {
@@ -993,12 +1235,11 @@
       body.appendChild(fig);
       var info = el("div", "feature__info");
       info.appendChild(phify(el("p", "feature__pitch"), g.pitch || ""));
-      /* "specs" or "platforms" - either spelling, either case */
+
       var specs = g.specs || g.platforms || g.Platforms || "";
       if (specs) info.appendChild(phify(el("p", "feature__specs"), specs));
       var dl = el("p", "dl");
-      /* released: false seals the whole row - no live download, no store
-         links, just a dead button and "coming soon" chips */
+
       var out = g.released !== false;
 
       if (!out) {
@@ -1016,8 +1257,7 @@
         } else if (builds.length > 1) {
           dl.appendChild(buildMenu(builds));
         }
-        /* fall back to the site-wide itch page when a game has no page of
-           its own; skip the button entirely if there is nowhere to go */
+
         var itchUrl = (g.itch && g.itch !== "#") ? g.itch : (KN.itch || "");
         if (itchUrl && itchUrl !== "#") {
           var it = el("a", "btn", "itch.io");
@@ -1046,7 +1286,6 @@
     });
   }
 
-  /* ═══ about page ═══════════════════════════════════════ */
   var bio = document.getElementById("bio");
   if (bio && KN.bio) {
     KN.bio.forEach(function (p) { bio.appendChild(phify(el("p"), p)); });

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kay_N</title>
+<meta name="description" content="How to reach Kay_N for questions, bug reports, and messages.">
+<link rel="icon" href="Tab_Logo.png">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="v2.css">
+<script>
+try{
+  if(!sessionStorage.getItem("kn-entered")){
+    sessionStorage.setItem("kn-entered","1");
+    location.replace("index.html");
+  }
+  if(!localStorage.getItem("kn-subject"))document.documentElement.classList.add("gated");
+}catch(e){document.documentElement.classList.add("gated");}</script>
+<script src="content.js" defer></script>
+<script src="main.js" defer></script>
+</head>
+<body class="site-v2">
+
+<div id="gate">
+  <form id="gate-form" autocomplete="off">
+    <pre id="gate-head"></pre>
+    <div class="gate__row">
+      <label class="gate__ps" for="gate-input">SUBJECT&nbsp;&gt;</label>
+      <span class="gate__fix" aria-hidden="true">SUBJ-</span>
+      <input id="gate-input" maxlength="12" spellcheck="false" autocomplete="off" aria-label="subject designation">
+    </div>
+    <p class="gate__err" id="gate-err" role="alert"></p>
+    <div class="gate__actions">
+      <button class="btn btn--dl" type="submit">register</button>
+    </div>
+    <p class="gate__fine">this designation is permanent. it cannot be changed, surrendered, or reissued.</p>
+  </form>
+</div>
+
+<div class="site-shell">
+<div class="statusbar" role="region" aria-label="Site status">
+  <span class="statusbar__version">Ver_ <span>2.0</span></span>
+  <span class="statusbar__subject" id="subject-cell" hidden></span>
+  <span id="visit-counter" title="Counted on this browser only">Visits:: —</span>
+  <span class="statusbar__time">Time <time id="clock" aria-label="Local time">--:--:--</time></span>
+</div>
+
+<div class="frame">
+  <header class="v2-masthead">
+    <h1>KAY_N<span class="title-cursor">_</span></h1>
+    <p class="v2-welcome">_Welcome to my website where everything is<br class="desktop-break">
+      released, documented and updated. Feel free to<br class="desktop-break">
+      explore around and grab yourself a game<br class="desktop-break">
+      to play and see more things.</p>
+    <nav class="v2-nav" aria-label="Main">
+      <a href="index.html">Home</a>
+      <span aria-hidden="true">//</span>
+      <a href="contact.html" aria-current="page">Contact</a>
+      <span aria-hidden="true">//</span>
+      <a href="about.html">About</a>
+      <span aria-hidden="true">//</span>
+      <a class="js-discord" href="#" target="_blank" rel="noopener">Discord ↗</a>
+    </nav>
+    <button class="v2-logo" type="button" aria-label="Expand Kay_N logo"><img src="Tab_Logo.png" alt="Kay_N logo" width="170" height="170"></button>
+  </header>
+
+  <main>
+    <section class="panel" id="contact" aria-labelledby="contact-title">
+      <div class="panel__head">
+        <span class="panel__title" id="contact-title">reach_the_desk</span>
+        <span class="panel__meta">links out</span>
+      </div>
+      <div class="panel__body">
+        <p>For questions, bug reports, collaborations, or a message, reach out through the channels below.</p>
+        <ul class="linklist">
+          <li><a class="js-mail" href="mailto:" target="_blank" rel="noopener noreferrer"></a></li>
+          <li><a class="js-discord" href="#" target="_blank" rel="noopener">discord ↗</a></li>
+          <li><a class="js-twitter" href="#" target="_blank" rel="noopener">Twitter ↗</a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="v2-footer">
+    <div class="v2-slashes" aria-hidden="true">////////////////////////////////////</div>
+    <p>KAY_N <span class="v2-copyright">© <span>2 0 2 6</span></span></p>
+  </footer>
+</div>
+</div>
+</body>
+</html>

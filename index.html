@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- kay_n's outpost. content is edited in content.js - not here. -->
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,21 +8,20 @@
 <meta name="description" content="Kay_N's corner of the internet: devlogs, releases, and transmissions from the workshop.">
 <link rel="icon" href="Tab_Logo.png">
 <link rel="stylesheet" href="style.css">
-<script>/* runs before the body paints */
+<link rel="stylesheet" href="v2.css">
+<script>
 try{
-  /* this is the front door - mark the session as entered */
+
   sessionStorage.setItem("kn-entered","1");
   if(!localStorage.getItem("kn-subject"))document.documentElement.classList.add("gated");
 }catch(e){document.documentElement.classList.add("gated");}</script>
 <script src="content.js" defer></script>
 <script src="main.js" defer></script>
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 <script src="terminal.js" defer></script>
 </head>
-<body>
+<body class="site-v2">
 
-<div class="bgfx" aria-hidden="true"></div>
-
-<!-- access control: unregistered visitors must register a designation -->
 <div id="gate">
   <form id="gate-form" autocomplete="off">
     <pre id="gate-head"></pre>
@@ -38,103 +37,117 @@ try{
     <p class="gate__fine">this designation is permanent. it cannot be changed, surrendered, or reissued.</p>
   </form>
 </div>
-<!-- boot - plays once per session -->
+
 <div id="boot" aria-hidden="true"><pre id="boot-text"></pre></div>
 
-<div class="statusbar" role="banner">
-  <span class="statusbar__cell statusbar__sys">KN/OS v0.1.0</span>
-  <span class="statusbar__cell statusbar__sig" aria-hidden="true">sig <span id="sig-bars"><b>▮</b><b>▮</b><b>▮</b><i>▯</i></span></span>
-  <span class="statusbar__cell statusbar__spacer"></span>
-  <span class="statusbar__cell" id="subject-cell" hidden></span>
-  <span class="statusbar__cell" id="visit-counter" title="counted on this machine only">visits: -</span>
-  <span class="statusbar__cell statusbar__clock" id="clock" aria-label="local time">--:--:--</span>
+<div class="site-shell">
+<div class="statusbar" role="region" aria-label="Site status">
+  <span class="statusbar__version">Ver_ <span>2.0</span></span>
+  <span class="statusbar__subject" id="subject-cell" hidden></span>
+  <span id="visit-counter" title="Counted on this browser only">Visits:: —</span>
+  <span class="statusbar__time">Time <time id="clock" aria-label="Local time">--:--:--</time></span>
 </div>
 
 <div class="frame">
 
-  <header class="masthead">
-    <div class="wordmark" id="wordmark">
-      <h1 class="wordmark__text" data-text="Kay_N">Kay_N<span class="cursor" aria-hidden="true">_</span></h1>
-    </div>
-    <p class="masthead__tagline js-tagline"></p>
-    <nav class="deck" aria-label="main">
-      <a class="here" href="index.html">home</a>
-      <a href="log.html">log</a>
-      <a href="games.html">games</a>
-      <a href="about.html">about</a>
-      <a class="js-discord deck__ext" href="#" target="_blank" rel="noopener">discord ↗</a>
-      <a class="js-twitter deck__ext" href="#" target="_blank" rel="noopener">twitter ↗</a>
-      <a class="js-youtube deck__ext" href="#" target="_blank" rel="noopener">youtube ↗</a>
+  <header class="v2-masthead">
+    <h1>KAY_N<span class="title-cursor">_</span></h1>
+    <p class="v2-welcome">_Welcome to my website where everything is<br class="desktop-break">
+      released, documented and updated.<br class="desktop-break">
+      Explore around and grab yourself a game<br class="desktop-break">
+      to play and see more things.</p>
+    <nav class="v2-nav" aria-label="Main">
+      <a href="index.html" aria-current="page">Home</a>
+      <span aria-hidden="true">//</span>
+      <a href="contact.html">Contact</a>
+      <span aria-hidden="true">//</span>
+      <a href="about.html">About</a>
+      <span aria-hidden="true">//</span>
+      <a class="js-discord" href="#" target="_blank" rel="noopener">Discord ↗</a>
     </nav>
-    <p class="masthead__status">last transmission: <span id="last-tx">-</span></p>
+    <button class="v2-logo" type="button" aria-label="Expand Kay_N logo"><img src="Tab_Logo.png" alt="Kay_N logo" width="170" height="170"></button>
   </header>
 
-  <main>
-
-  <section class="panel" id="workbench" aria-labelledby="workbench-title">
-    <div class="panel__head">
-      <span class="panel__title" id="workbench-title">workbench</span>
-      <span class="panel__meta">now developing</span>
-    </div>
-    <div class="panel__body feature">
-      <figure class="feature__screen" id="wb-media">
-        <div class="artslot">
-          <span class="artslot__mark">▢</span>
-          <span>media slot - set project.media in content.js</span>
-        </div>
-      </figure>
-      <div class="feature__info">
-        <h2 class="feature__name" id="wb-name">-</h2>
-        <p class="feature__pitch" id="wb-pitch"></p>
-        <p><a class="btn" href="log.html">devlog</a> <a class="btn js-discord" href="#" target="_blank" rel="noopener">join the discord</a></p>
-        <!-- live readout, built by main.js -->
-        <div class="mon" id="wb-monitor"></div>
+  <main class="v2-home">
+    <section class="v2-catalogue" aria-label="Games and selected game media">
+      <h2 class="v2-catalogue-title">GAME_ARCHIVE</h2>
+      <div class="v2-library" id="games">
+        <h2 class="visually-hidden">Games</h2>
+        <ul class="shelf" id="games-shelf" data-require-model="true" aria-label="Game collection"></ul>
       </div>
-    </div>
-  </section>
+      <section class="v2-display" id="display" aria-labelledby="wb-name">
+        <header class="v2-game-heading">
+          <h2 id="wb-name">Media</h2>
+          <span id="display-status" hidden></span>
+          <span class="window-decoration" aria-hidden="true">
+            <svg viewBox="0 0 12 12"><path d="M2 10h8"/></svg>
+            <svg viewBox="0 0 12 12"><path d="M2 2h8v8H2z"/></svg>
+            <svg viewBox="0 0 12 12"><path d="m2 2 8 8m0-8-8 8"/></svg>
+          </span>
+        </header>
+        <figure class="v2-media" id="wb-media" aria-label="Selected game images and videos">
+          <div class="artslot">No game selected.</div>
+        </figure>
+        <div class="v2-game-info" id="game-info" hidden>
+          <div class="dl" id="display-actions"></div>
+          <details class="display-details" id="display-details" hidden>
+            <summary>About this game / controls</summary>
+            <p id="display-description"></p>
+            <p id="display-specs" hidden></p>
+          </details>
+        </div>
+      </section>
+    </section>
 
-  <section class="panel" id="log" aria-labelledby="log-title">
-    <div class="panel__head">
-      <span class="panel__title" id="log-title">transmission_log</span>
-      <a class="panel__meta" href="log.html">view all »</a>
-    </div>
-    <div class="panel__body">
-      <ol class="log" id="home-log"></ol>
-      <noscript><p class="ph">the log needs javascript - it reads from content.js</p></noscript>
-    </div>
-  </section>
+    <section class="v2-box v2-music" id="music" aria-labelledby="music-title">
+      <h2 id="music-title">MUSIC_ARCHIVE</h2>
+      <div class="music-archive">
+        <div class="music-library" id="music-library" role="list" aria-label="Game soundtracks"></div>
+        <div class="music-device">
+          <div class="music-device__header">
+            <span class="music-device__name" aria-hidden="true"></span>
+            <div class="music-device__buttons" aria-hidden="true">
+              <span><svg viewBox="0 0 16 16"><path d="M4 2.5 13 8 4 13.5Z"/></svg></span>
+              <span><svg viewBox="0 0 16 16"><path d="M5 3v10 M11 3v10"/></svg></span>
+              <span><svg viewBox="0 0 16 16"><path d="M8 1v7 M4 4a5.5 5.5 0 1 0 8 0"/></svg></span>
+            </div>
+          </div>
+          <div class="music-player" id="music-player" aria-live="polite">
+            <p class="music-player__empty">Select a game to load its soundtrack.</p>
+          </div>
+          <div class="music-device__base" aria-hidden="true"><span></span><i>////////</i></div>
+        </div>
+      </div>
+    </section>
 
-  <section class="panel" id="Protocols" aria-labelledby="Protocols-title">
-    <div class="panel__head">
-      <span class="panel__title" id="Protocols-title">Protocols</span>
-      <a class="panel__meta" href="games.html">builds + downloads »</a>
+    <div class="v2-lower">
+      <section class="v2-box" id="log" aria-labelledby="log-title">
+        <h2 id="log-title">Logs</h2>
+        <ol class="log" id="home-log"></ol>
+        <a class="v2-archive-link" href="log.html">View all logs ↗</a>
+        <noscript>The logs need JavaScript to load.</noscript>
+      </section>
+      <section class="v2-box" id="terminal" aria-labelledby="terminal-title">
+        <h2 id="terminal-title">Terminal</h2>
+        <div class="v2-terminal-body">
+          <div class="term__out" id="term-out" role="log" aria-label="Terminal output"></div>
+          <pre class="term__board" id="term-board" tabindex="0" aria-label="KN-TRIS game" hidden></pre>
+          <div class="term__game-status" id="term-game-status" aria-live="polite" hidden></div>
+          <form class="term__in" id="term-form">
+            <span class="term__ps" aria-hidden="true">guest@outpost:~$</span>
+            <input id="term-cmd" autocomplete="off" spellcheck="false" aria-label="Terminal input">
+          </form>
+        </div>
+      </section>
     </div>
-    <div class="panel__body">
-      <ul class="shelf" id="Protocols-shelf"></ul>
-    </div>
-  </section>
-
-  <section class="panel" id="terminal" aria-labelledby="terminal-title">
-    <div class="panel__head">
-      <span class="panel__title" id="terminal-title">terminal</span>
-      <span class="panel__meta">type help</span>
-    </div>
-    <div class="panel__body">
-      <div class="term__out" id="term-out"></div>
-      <pre class="term__board" id="term-board" hidden></pre>
-      <form class="term__in" id="term-form">
-        <span class="term__ps" aria-hidden="true">guest@outpost:~$</span>
-        <input id="term-cmd" autocomplete="off" spellcheck="false" aria-label="terminal input">
-      </form>
-    </div>
-  </section>
-
   </main>
 
-  <footer class="basement">
-    <p>© 2026 Kay_N · <a class="js-discord" href="#" target="_blank" rel="noopener">discord</a> · <span class="js-mail"></span></p>
+  <footer class="v2-footer">
+    <div class="v2-slashes" aria-hidden="true">////////////////////////////////////</div>
+    <p>KAY_N <span class="v2-copyright">© <span>2 0 2 6</span></span></p>
   </footer>
 
+</div>
 </div>
 </body>
 </html>

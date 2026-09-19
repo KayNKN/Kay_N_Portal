@@ -1,4 +1,4 @@
-/* KN/TERM - a small terminal that mostly cooperates. includes KN-TRIS. */
+/* I keep the terminal commands and game here. */
 
 (function () {
   "use strict";
@@ -7,11 +7,11 @@
   var form = document.getElementById("term-form");
   var input = document.getElementById("term-cmd");
   var board = document.getElementById("term-board");
+  var gameStatus = document.getElementById("term-game-status");
   if (!out || !form || !input) return;
 
   var KN = window.KN || {};
 
-  /* the prompt wears the visitor's designation once they have one */
   var who = function () {
     var id = "";
     try { id = localStorage.getItem("kn-subject") || ""; } catch (e) {}
@@ -30,11 +30,11 @@
     out.appendChild(d);
     out.scrollTop = out.scrollHeight;
   };
+  var escapeText = function (value) { return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); };
   var echo = function (cmd) {
-    print('<span class="t-acc">' + who() + "</span> " + cmd.replace(/</g, "&lt;"));
+    print('<span class="t-acc">' + escapeText(who()) + "</span> " + escapeText(cmd));
   };
 
-  /* ═══ KN-TRIS ══════════════════════════════════════════ */
   var W = 10, H = 16;
   var SHAPES = [
     [[1, 1, 1, 1]],
@@ -64,14 +64,12 @@
   };
   var spawn = function (g) {
     g.shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
-    /* centre on the piece's own width, and start fully on the board so
-       nothing gets clipped off the top when it locks */
+
     g.px = Math.floor((W - g.shape[0].length) / 2);
     g.py = 0;
     if (collides(g, g.shape, g.px, g.py)) g.over = true;
   };
-  /* rotation kicks: straight up, then shove sideways, then lift off the
-     floor. the I piece changes footprint by 3 cells, so ±2 is not optional. */
+
   var KICKS = [
     [0, 0],
     [-1, 0], [1, 0], [-2, 0], [2, 0], [-3, 0], [3, 0],
@@ -117,7 +115,7 @@
     var hi = 0;
     try { hi = parseInt(localStorage.getItem("kn-tris-hi"), 10) || 0; } catch (e) {}
     var s = "KN-TRIS   score " + g.score + "   lines " + g.lines + "   hi " + Math.max(hi, g.score) + "\n";
-    s += "┌" + "─".repeat(W) + "┐\n";
+    s += "┌" + "─".repeat(W * 2) + "┐\n";
     for (var y = 0; y < H; y++) {
       s += "│";
       for (var x = 0; x < W; x++) {
@@ -126,12 +124,19 @@
           var sy = y - g.py, sx = x - g.px;
           if (sy >= 0 && sy < g.shape.length && sx >= 0 && sx < g.shape[sy].length && g.shape[sy][sx]) v = 1;
         }
-        s += v ? "█" : "·";
+        /* I use two characters per cell to keep the board proportions readable. */
+        s += v ? "██" : "  ";
       }
       s += "│\n";
     }
-    s += "└" + "─".repeat(W) + "┘\n";
-    s += g.over ? "signal lost. [q] to exit" : "←→ move · ↑ rotate · ↓ fall · space drop · q quit";
+    s += "└" + "─".repeat(W * 2) + "┘";
+    var statusText = g.over ? "you lose. press q to close" : "←→ move · ↑ rotate · ↓ fall · space drop · q quit";
+    if (gameStatus) {
+      gameStatus.textContent = statusText;
+      gameStatus.hidden = false;
+    } else {
+      s += "\n" + statusText;
+    }
     board.textContent = s;
   };
   var speed = function (g) { return Math.max(120, 480 - g.lines * 22); };
@@ -154,7 +159,8 @@
     print(msg + " final score: <span class='t-acc'>" + game.score + "</span> · " + game.lines + " lines.");
     game = null;
     board.hidden = true;
-    /* hand the keyboard back to the prompt */
+    if (gameStatus) gameStatus.hidden = true;
+
     input.disabled = false;
     input.placeholder = "";
     input.focus();
@@ -167,12 +173,10 @@
     board.hidden = false;
     draw(game);
     loop(game);
-    /* the game owns the keyboard until it's over - otherwise arrows and
-       space would be typing into the prompt at the same time */
+    /* I reserve the keyboard for the game until it closes. */
     input.blur();
     input.disabled = true;
     input.placeholder = "KN-TRIS running - press q to quit";
-    print("KN-TRIS online. the blocks keep coming. nobody knows who sends them.", "t-dim");
   };
 
   document.addEventListener("keydown", function (e) {
@@ -211,7 +215,12 @@
     e.preventDefault();
   });
 
-  /* ═══ commands ═════════════════════════════════════════ */
+  var resetOutput = function () {
+    out.innerHTML = "";
+    print("KN/TERM ready. type <span class='t-acc'>help</span>. or do not.", "t-dim");
+    out.scrollTop = 0;
+  };
+
   var CMDS = {
     help: function () {
       print("commands: <span class='t-acc'>help · play · whoami · subject · date · ls · discord · clear · exit</span>");
@@ -248,7 +257,7 @@
       print("opening the channel...");
       window.open(KN.discord || "#", "_blank", "noopener");
     },
-    clear: function () { out.innerHTML = ""; },
+    clear: resetOutput,
     exit: function () { print("there is no exit. close the tab like everyone else."); },
     hello: function () { print("hey."); },
     hi: function () { print("hey."); }
@@ -267,12 +276,11 @@
       print(/secret/.test(raw) ? "permission denied." : "nothing readable there.");
       return;
     }
-    if (CMDS[cmd]) CMDS[cmd]();
-    else print("unknown command: " + cmd.replace(/</g, "&lt;") + " - try <span class='t-acc'>help</span>");
+    if (Object.prototype.hasOwnProperty.call(CMDS, cmd)) CMDS[cmd]();
+    else print("unknown command: " + escapeText(cmd) + " - try <span class='t-acc'>help</span>");
   });
 
-  /* if the visitor registers while the page is open, adopt the new name */
   document.addEventListener("kn:subject", dressPrompt);
 
-  print("KN/TERM ready. type <span class='t-acc'>help</span>. or don't.", "t-dim");
+  resetOutput();
 })();
