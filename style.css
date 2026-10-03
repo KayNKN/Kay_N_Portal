@@ -173,31 +173,6 @@ a:visited { text-decoration-style: dotted; }
   margin-left: 3px;
 }
 
-#boot {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  background: var(--ink-0);
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding: 7vh 7vw;
-  transition: opacity .4s;
-}
-#boot.boot--out { opacity: 0; pointer-events: none; }
-#boot pre {
-  font-family: var(--font-ui);
-  font-size: 13px;
-  line-height: 1.7;
-  color: var(--fg);
-  min-height: 15em;
-}
-#boot pre .b-dim  { color: var(--fg-dim); }
-#boot pre .b-ok   { color: var(--fg); }
-#boot pre .b-acc  { color: var(--accent); }
-#boot pre .b-warn { color: var(--accent); }
-#boot pre .b-cur  { color: var(--accent); animation: blink .8s steps(1) infinite; }
-
 .statusbar {
   position: relative;
   z-index: 10;

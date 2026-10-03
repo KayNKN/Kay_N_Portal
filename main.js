@@ -90,59 +90,6 @@
   window.addEventListener('hashchange', syncNavigation);
   window.addEventListener('pageshow', syncNavigation);
 
-  var boot = document.getElementById("boot");
-  var runBoot = function () {
-    if (!boot || !boot.parentNode) return;
-    var pre = document.getElementById("boot-text");
-    var seen = false;
-    try { seen = sessionStorage.getItem("kn-booted") === "1"; } catch (e) {}
-    var still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    var line = function (label, value, cls) {
-      var dots = ".".repeat(Math.max(3, 24 - label.length));
-      return label + ' <span class="b-dim">' + dots + "</span> " +
-             '<span class="' + (cls || "b-ok") + '">' + value + "</span>";
-    };
-    var LINES = [
-      '<span class="b-dim">KAY_N 2.0</span>',
-      '<span class="b-dim">' + "─".repeat(32) + "</span>",
-      "",
-      line("mount /dev/archive", "ok"),
-      line("load transmissions", String((KN.logs || []).length)),
-      line("load builds", String((KN.games || []).length)),
-      line("open channel", "ok"),
-      line("integrity check", "anomaly", "b-warn"),
-      "",
-      '<span class="b-ok">ready.</span>'
-    ];
-    var PROMPT = '\n<span class="b-acc">kay_n@outpost:~$</span> <span class="b-cur">█</span>';
-
-    var bootDone = function () {
-      boot.classList.add("boot--out");
-      setTimeout(function () { boot.remove(); }, 500);
-      try { sessionStorage.setItem("kn-booted", "1"); } catch (e) {}
-    };
-
-    if (seen) {
-      boot.remove();
-    } else if (still) {
-      pre.innerHTML = LINES.join("\n") + PROMPT;
-      setTimeout(bootDone, 800);
-    } else {
-      var i = 0;
-      var typer = setInterval(function () {
-        i++;
-        pre.innerHTML = LINES.slice(0, i).join("\n") +
-          (i < LINES.length ? '<span class="b-cur">█</span>' : "");
-        if (i >= LINES.length) {
-          clearInterval(typer);
-          pre.innerHTML = LINES.join("\n") + PROMPT;
-          setTimeout(bootDone, 560);
-        }
-      }, 110);
-    }
-  };
-
   var clockEl = document.getElementById("clock");
   if (clockEl) {
     var tick = function () {
@@ -177,8 +124,16 @@
   var counterEl = document.getElementById("visit-counter");
   if (counterEl) {
     try {
-      var visits = (parseInt(localStorage.getItem("kn-visits"), 10) || 0) + 1;
-      localStorage.setItem("kn-visits", String(visits));
+      var visits = parseInt(localStorage.getItem("kn-visits"), 10) || 0;
+      var lastVisit = Number(localStorage.getItem("kn-last-visit"));
+      var now = Date.now();
+      var visitInterval = 24 * 60 * 60 * 1000;
+      // I count once per browser every 24 hours, across all pages.
+      if (!lastVisit || !Number.isFinite(lastVisit) || now - lastVisit >= visitInterval) {
+        visits += 1;
+        localStorage.setItem("kn-visits", String(visits));
+        localStorage.setItem("kn-last-visit", String(now));
+      }
       counterEl.textContent = "Visits:: " + visits;
     } catch (e) {
       counterEl.textContent = "Visits:: ?";
@@ -191,7 +146,6 @@
     localStorage.removeItem("kn-subject-burned");
     sessionStorage.removeItem("kn-entered");
   } catch (e) {}
-  runBoot();
 
   document.querySelectorAll(".deck").forEach(function (nav) {
     var links = [].slice.call(nav.querySelectorAll("a"));
