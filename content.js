@@ -1,25 +1,21 @@
-/* I edit my site text, media, and download links here. I keep multiline text between backticks. */
 
 window.KN = {
 
   name: "Kay_N",
   tagline: "[Welcome_ANON]",
 
-  /* I change my header artwork here. */
   artwork: {
     tabIcon: "Tab_Logo.png?v=20260919",
     mainImage: "art/Main_Logo.png",
-    mainVideo: "art/IntroWithoutS.mp4" // I leave this empty to use mainImage.
+    mainVideo: "art/IntroWithoutS.mp4"
   },
 
-  /* I set my contact and social links here. Empty links stay hidden. */
   discord: "https://discord.gg/6xuBCrgGdp",
 
   twitter: "https://x.com/Kay_NKN",
   mail: "k4y.nkn@gmail.com",
   steam: "",
 
-  /* I choose the game shown when the homepage opens. */
   project: {
     name: "A_Way_Out",
     pitch: "[Keep_the_Camera_ON.]",
@@ -34,13 +30,11 @@ window.KN = {
     ]
   },
 
-  /* I add my soundtrack models and audio files here. */
   music: [
     {
       game: "A_Way_Out",
       title: "A_Way_Out OST",
       model: "art/models/A_Way_Out_OST.glb",
-      /* I name each track and add its audio file here. */
       tracks: [
         { title: "Out Of Place", audio: "audio/A_WAY_OUT_OSTs/Out_Of_Place.mp3", duration: 42.888 },
         { title: "Where We Go", audio: "audio/A_WAY_OUT_OSTs/Where_We_Go.mp3", duration: 44.64 }
@@ -56,7 +50,6 @@ window.KN = {
     }
   ],
 
-  /* I add new logs at the top. Media accepts local paths or video links. */
   logs: [
 
     {
@@ -146,7 +139,6 @@ _Thank you for playing my first game. See you around.`
 
   ],
 
-  /* I choose how many empty game slots to show. */
   Protocols: {
     emptySlots: 1,
     emptyYear: "SOON",
@@ -154,7 +146,6 @@ _Thank you for playing my first game. See you around.`
     emptyNote: "the next one goes here"
   },
 
-  /* I add games here. I keep each model, gallery, controls, and downloads together. */
   games: [
     {
       title: "[A_Way_Out]",
@@ -166,7 +157,7 @@ _Thank you for playing my first game. See you around.`
       platforms: "[Windows // 108 MB]\n[Linux // 108 MB]",
 
       released: true,
-      releaseDate: "2026-08-08", /* I use YYYY-MM-DD; my newest dated release appears first. */
+      releaseDate: "2026-08-08",
       lockedLabel: "⊘ build sealed",
       lockedNote: "no build has been released yet.",
 
@@ -205,7 +196,6 @@ _GOOD TO KNOW: The camera can only recharge when it is turned off.
       released: true,
       releaseDate: "2026-09-19",
       desc: "",
-      // I edit my description and controls below.
       pitch:`//_Developed by: Kay_N
 
 _Someone has to work around here.
@@ -230,7 +220,6 @@ _Someone has to work around here.
 
   ],
 
-  /* I edit my About text here. */
   bio: [
     "[ Kay_N is a game developer. Always liked Technology and sci-fi, so why not mix both and see what comes out of it. Also produces music for the Games. See you around, Anon. ]",
   ]

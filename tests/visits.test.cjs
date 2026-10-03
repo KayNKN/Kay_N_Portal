@@ -3,7 +3,8 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 const source = fs.readFileSync(require.resolve('../main.js'), 'utf8');
-const counterSource = source.slice(source.indexOf('  var counterEl ='), source.indexOf('  /* I clear old registration'));
+const counterStart = source.indexOf('  var counterEl =');
+const counterSource = source.slice(counterStart, source.indexOf('\n  try {', counterStart));
 const day = 24 * 60 * 60 * 1000;
 const start = Date.UTC(2026, 9, 3);
 

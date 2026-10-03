@@ -1,4 +1,3 @@
-/* I keep the terminal commands and game here. */
 
 (function () {
   "use strict";
@@ -120,7 +119,6 @@
           var sy = y - g.py, sx = x - g.px;
           if (sy >= 0 && sy < g.shape.length && sx >= 0 && sx < g.shape[sy].length && g.shape[sy][sx]) v = 1;
         }
-        /* I use two characters per cell to keep the board proportions readable. */
         s += v ? "██" : "  ";
       }
       s += "│\n";
@@ -169,7 +167,6 @@
     board.hidden = false;
     draw(game);
     loop(game);
-    /* I reserve the keyboard for the game until it closes. */
     input.blur();
     input.disabled = true;
     input.placeholder = "KN-TRIS running - press q to quit";

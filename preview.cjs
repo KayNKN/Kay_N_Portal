@@ -1,4 +1,3 @@
-// I start my local preview with node preview.cjs.
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');

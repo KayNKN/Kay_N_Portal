@@ -4,7 +4,6 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 const source = fs.readFileSync(require.resolve('../main.js'), 'utf8');
 
-// I test the display controller with lightweight DOM and media substitutes.
 function element(tag='div', cls='', text='') {
   return {tagName:tag.toUpperCase(), className:cls, textContent:text, children:[], attributes:{}, hidden:false,
     appendChild(child){this.children.push(child);return child;},

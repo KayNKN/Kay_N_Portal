@@ -1,4 +1,3 @@
-/* I render the site using content.js. */
 
 (function () {
   "use strict";
@@ -128,7 +127,6 @@
       var lastVisit = Number(localStorage.getItem("kn-last-visit"));
       var now = Date.now();
       var visitInterval = 24 * 60 * 60 * 1000;
-      // I count once per browser every 24 hours, across all pages.
       if (!lastVisit || !Number.isFinite(lastVisit) || now - lastVisit >= visitInterval) {
         visits += 1;
         localStorage.setItem("kn-visits", String(visits));
@@ -140,7 +138,6 @@
     }
   }
 
-  /* I clear old registration data from returning browsers. */
   try {
     localStorage.removeItem("kn-subject");
     localStorage.removeItem("kn-subject-burned");
@@ -253,9 +250,7 @@
     return wrap;
   };
 
-  /* I load YouTube only after a visitor presses play. */
   var offline = location.protocol === "file:";
-  /* I keep the same video player when expanding it. */
   var started = {};
 
   var ytFrame = function (id, cap, autoplay) {
@@ -347,7 +342,6 @@
     if (btn) { btn.textContent = "✕"; btn.title = "close"; }
   };
 
-  /* I handle gallery keys before the terminal game can receive them. */
   document.addEventListener("keydown", function (e) {
     if (!maxed) return;
     if (e.key === "Escape") unmaximise();
@@ -462,7 +456,6 @@
         t.title = capOf(item) || src.split("/").pop();
         t.setAttribute("aria-label", "Show media " + (i + 1) + ": " + t.title);
         if (k === "image") {
-          /* I load the first preview now and defer the rest until the browser is idle. */
           if (i === 0) {
             t.style.backgroundImage = 'url("' + src.replace(/"/g, "%22") + '")';
           } else {
@@ -538,7 +531,6 @@
     var musicCards = [];
     var activeMusicAudio;
     var cleanName = function (value) { return String(value || "").replace(/^\s*\[\s*|\s*\]\s*$/g, "").trim(); };
-    /* I use each game's release date to order its soundtrack. */
     var musicItems = orderedGames(KN.music.map(function (item) {
       var game = (KN.games || []).find(function (game) {
         return cleanName(game.title).toLowerCase() === cleanName(item.game).toLowerCase();
@@ -713,7 +705,6 @@
     return model;
   };
 
-  /* I sort games and soundtracks by release date, keeping upcoming entries last. */
   function orderedGames(games) {
     var releaseTime = function (game) {
       var time = Date.parse(game.releaseDate || "");
@@ -831,7 +822,6 @@
     li.setAttribute("aria-expanded", "false");
     li.tabIndex = 0;
     li.addEventListener("click", function (ev) {
-      /* I inspect the click path so replaced media controls do not collapse the entry. */
       var path = (ev.composedPath && ev.composedPath()) || [];
       for (var i = 0; i < path.length; i++) {
         var n = path[i];
@@ -954,7 +944,6 @@
     });
 
     var media = Array.isArray(g.media) ? g.media.slice() : [g.media];
-    // I keep each project trailer with its own game.
     var project = KN.project || {};
     if (gameName(project.name).toLowerCase() === name.toLowerCase()) {
       var extras = Array.isArray(project.media) ? project.media : [project.media];

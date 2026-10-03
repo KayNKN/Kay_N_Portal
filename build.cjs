@@ -6,7 +6,6 @@ const root = __dirname;
 const pages = ['index.html', 'about.html', 'contact.html', 'games.html', 'log.html'];
 const files = new Set();
 
-// I check my website in place without creating a deployment folder.
 function add(reference) {
   if (!reference || /^(?:[a-z]+:|#|\/\/)/i.test(reference)) return;
   const name = decodeURIComponent(reference.split(/[?#]/)[0]);
