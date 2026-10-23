@@ -15,7 +15,25 @@ http.createServer((req, res) => {
   }
   fs.readFile(file, (error, data) => {
     if (error) { res.writeHead(404).end('Not found'); return; }
-    res.writeHead(200, {'Content-Type':types[path.extname(file)] || 'application/octet-stream','Cache-Control':'no-store'});
-    res.end(data);
+    const headers = {'Content-Type':types[path.extname(file)] || 'application/octet-stream','Cache-Control':'no-store','Accept-Ranges':'bytes'};
+    if (req.headers.range) {
+      const match = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range);
+      let start = match && match[1] ? Number(match[1]) : 0;
+      let end = match && match[2] ? Number(match[2]) : data.length - 1;
+      if (match && !match[1] && match[2]) {
+        start = Math.max(0, data.length - Number(match[2]));
+        end = data.length - 1;
+      }
+      if (!match || (!match[1] && !match[2]) || !Number.isSafeInteger(start) || !Number.isSafeInteger(end) || start >= data.length || start > end) {
+        res.writeHead(416, {...headers, 'Content-Range':'bytes */' + data.length}).end();
+        return;
+      }
+      end = Math.min(end, data.length - 1);
+      res.writeHead(206, {...headers, 'Content-Range':`bytes ${start}-${end}/${data.length}`, 'Content-Length':end - start + 1});
+      res.end(req.method === 'HEAD' ? undefined : data.subarray(start, end + 1));
+      return;
+    }
+    res.writeHead(200, {...headers, 'Content-Length':data.length});
+    res.end(req.method === 'HEAD' ? undefined : data);
   });
 }).listen(4173, '127.0.0.1', () => console.log('Preview: http://127.0.0.1:4173/'));

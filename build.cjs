@@ -44,4 +44,18 @@ add('fonts/terminus/COPYING');
 add('fonts/terminus/README.md');
 add('CNAME');
 
-console.log('Checked: ' + files.size + ' website files in the repository. No files copied.');
+if (process.argv.includes('--deploy')) {
+  const destination = path.resolve(root, 'dist');
+  if (path.dirname(destination) !== root || path.basename(destination) !== 'dist') {
+    throw new Error('Unsafe deployment directory');
+  }
+  fs.rmSync(destination, {recursive: true, force: true});
+  for (const name of files) {
+    const target = path.join(destination, name);
+    fs.mkdirSync(path.dirname(target), {recursive: true});
+    fs.copyFileSync(path.join(root, name), target);
+  }
+  console.log('Deployment ready: ' + files.size + ' verified website files in ' + destination);
+} else {
+  console.log('Checked: ' + files.size + ' website files in the repository. No files copied.');
+}

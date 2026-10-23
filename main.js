@@ -304,9 +304,13 @@
     if (k === "video") {
       node = document.createElement("video");
       node.src = src;
-      node.controls = true;
+      var animated = !!(item && item.autoplay);
+      node.controls = !animated;
       node.playsInline = true;
-      node.preload = "metadata";
+      node.muted = animated;
+      node.autoplay = animated;
+      node.loop = animated;
+      node.preload = animated ? "auto" : "metadata";
     } else {
       node = document.createElement("img");
       node.src = src;
@@ -384,6 +388,18 @@
     var many = items.length > 1;
     var gal = el("div", "gal");
     var stage = el("div", "gal__stage");
+    var releaseGame = (KN.games || []).find(function (game) {
+      return (game.media || []).some(function (media) {
+        return items.some(function (item) { return srcOf(item) === srcOf(media); });
+      });
+    });
+    var releaseStamp = null;
+    if (releaseGame && releaseGame.releaseDate) {
+      var parts = releaseGame.releaseDate.split("-");
+      releaseStamp = el("time", "gal__release", parts[2] + "//" + parts[1] + "//" + parts[0]);
+      releaseStamp.setAttribute("datetime", releaseGame.releaseDate);
+      releaseStamp.setAttribute("aria-label", "Release date: " + releaseGame.releaseDate);
+    }
     var at = 0;
     var thumbs = [];
 
@@ -422,6 +438,7 @@
           tb.textContent = "";
         }
       }
+      if (releaseStamp && stage.dataset.kind !== "youtube") stage.appendChild(releaseStamp);
       stage.appendChild(expand);
       if (many) {
         stage.appendChild(prev);
@@ -465,6 +482,17 @@
               t.textContent = "";
             });
           }
+        } else if (k === "video" && item.autoplay) {
+          var preview = document.createElement("video");
+          preview.muted = true;
+          preview.autoplay = true;
+          preview.loop = true;
+          preview.playsInline = true;
+          preview.controls = false;
+          preview.preload = "auto";
+          preview.setAttribute("aria-hidden", "true");
+          preview.src = src;
+          t.appendChild(preview);
         } else {
           t.textContent = k === "audio" ? "♪" : "▶";
         }
@@ -542,13 +570,16 @@
     })).map(function (entry) { return entry.game; });
     var selectMusic = function (item, index) {
       if (activeMusicAudio) activeMusicAudio.pause();
-      musicCards.forEach(function (card, i) { card.setAttribute("aria-pressed", String(i === index)); });
+      musicCards.forEach(function (card, i) {
+        card.setAttribute("aria-pressed", String(i === index));
+        if (card.__model) card.__model.__setSelected(i === index);
+      });
       musicPlayer.replaceChildren();
       var title = item.title || cleanName(item.game) + " OST";
       musicPlayer.appendChild(el("h3", "music-player__title", title));
       if (Array.isArray(item.tracks) && item.tracks.length) {
         var header = el("div", "music-track-heading");
-        ["#", "TITLE"].forEach(function (label) { header.appendChild(el("span", "", label)); });
+        ["#", "TITLE", "TIME"].forEach(function (label) { header.appendChild(el("span", "", label)); });
         header.setAttribute("aria-hidden", "true");
         musicPlayer.appendChild(header);
         var trackList = el("ol", "music-tracks");
@@ -604,6 +635,7 @@
           }
           status.textContent = "";
           syncPlayback();
+          syncSeek();
           player.play().catch(function () { status.textContent = "Unable to play this track. Try again."; syncPlayback(); });
         };
         item.tracks.forEach(function (track, trackIndex) {
@@ -618,6 +650,12 @@
           label.appendChild(el("span", "music-track__title", trackTitle));
           label.appendChild(el("span", "music-track__artist", item.artist || "Kay_N"));
           button.appendChild(label);
+          var seconds = Number(track.duration);
+          var durationText = Number.isFinite(seconds) && seconds > 0
+            ? Math.floor(seconds / 60) + ":" + String(Math.floor(seconds % 60)).padStart(2, "0")
+            : "--:--";
+          var durationLabel = el("span", "music-track__duration", durationText);
+          button.appendChild(durationLabel);
           button.addEventListener("click", function () { playTrack(trackIndex); });
           trackButtons.push(button);
           row.appendChild(button);
@@ -663,11 +701,14 @@
         model.className = "music-model";
         model.src = item.model;
         model.setAttribute("alt", item.title || "Soundtrack CD model");
-        model.setAttribute("camera-orbit", item.modelOrbit || "30deg 75deg auto");
+        model.setAttribute("camera-orbit", item.modelOrbit || (Math.random() * 360).toFixed(0) + "deg 75deg auto");
         model.setAttribute("rotation-per-second", item.modelRotation || "18deg");
+        model.setAttribute("auto-rotate-delay", "0");
         model.setAttribute("auto-rotate", "");
         model.setAttribute("disable-zoom", "");
         model.setAttribute("interaction-prompt", "none");
+        bindModelSelection(model, item);
+        card.__model = model;
         cover.appendChild(model);
       } else {
         cover.appendChild(el("span", "music-model-space", "MODEL PENDING"));
@@ -678,6 +719,11 @@
       musicCards.push(card);
       musicLibrary.appendChild(card);
     });
+    for (var musicSlot = musicItems.length; musicSlot < 9; musicSlot++) {
+      var unknownMusic = el("div", "music-card music-card--unknown");
+      unknownMusic.appendChild(el("span", "music-card__label", "???"));
+      musicLibrary.appendChild(unknownMusic);
+    }
     if (musicCards.length) selectMusic(musicItems[0], 0);
   }
 
@@ -687,14 +733,19 @@
     var model = el("model-viewer", interactive ? "display-model" : "game-model");
     model.setAttribute("src", g.model);
     model.setAttribute("alt", name + " 3D model");
+    if (g.modelDisplayScale) model.style.scale = String(g.modelDisplayScale);
     model.setAttribute("auto-rotate", "");
     model.setAttribute("auto-rotate-delay", "0");
-    model.setAttribute("rotation-per-second", g.modelRotation || "18deg");
-    model.setAttribute("camera-orbit", g.modelOrbit || "30deg 78deg auto");
+    var speed = (parseFloat(g.modelRotation) || 18) * (0.35 + Math.random() * 0.45) + 0.4;
+    model.setAttribute("rotation-per-second", (Math.random() < 0.5 ? -speed : speed).toFixed(1) + "deg");
+    model.setAttribute("camera-orbit", g.modelOrbit || (Math.random() * 360).toFixed(0) + "deg 78deg auto");
+    model.style.setProperty("--float-duration", (5 + Math.random() * 4).toFixed(2) + "s");
+    model.style.setProperty("--float-delay", (-Math.random() * 9).toFixed(2) + "s");
     model.setAttribute("environment-image", "neutral");
     model.setAttribute("shadow-intensity", "0");
     model.setAttribute("interaction-prompt", "none");
     model.setAttribute("loading", "lazy");
+    bindModelSelection(model, g);
     if (interactive) {
       model.setAttribute("camera-controls", "");
       model.setAttribute("touch-action", "pan-y");
@@ -705,12 +756,67 @@
     return model;
   };
 
+  function bindModelSelection(model, g) {
+    var restingOrbit = model.getAttribute("camera-orbit");
+    var selected = false;
+    var turnFrame = 0;
+    var settleAnimation = null;
+    model.__setSelected = function (value) {
+      if (selected === value && value) return;
+      selected = value;
+      cancelAnimationFrame(turnFrame);
+      turnFrame = 0;
+      var rock = typeof getComputedStyle === "function" ? getComputedStyle(model).rotate : "none";
+      if (settleAnimation) settleAnimation.cancel();
+      model.style.animation = value ? "none" : "";
+      if (value && model.animate && rock !== "none") {
+        settleAnimation = model.animate([{rotate: rock}, {rotate: "0deg"}], {
+          duration: 650, easing: "cubic-bezier(.22, 1, .36, 1)"
+        });
+      }
+      model.style.rotate = value ? "0deg" : "";
+      if (!value) {
+        if (g.modelFrontPolar != null) model.setAttribute("camera-orbit", restingOrbit);
+        model.setAttribute("auto-rotate", "");
+        return;
+      }
+      model.removeAttribute("auto-rotate");
+      if (!model.loaded || typeof model.getCameraOrbit !== "function") return;
+      var start = model.turntableRotation;
+      var orbit = model.getCameraOrbit();
+      var target = orbit.theta - (g.modelFrontYaw || 0) * Math.PI / 180;
+      if (g.modelFrontPolar != null) {
+        model.setAttribute("camera-orbit", orbit.theta + "rad " + g.modelFrontPolar + "deg " + orbit.radius + "m");
+      }
+      var delta = Math.atan2(Math.sin(target - start), Math.cos(target - start));
+      var duration = 380 + Math.abs(delta) / Math.PI * 360;
+      var began = performance.now();
+      var turn = function (now) {
+        if (!selected) return;
+        var progress = Math.min(1, (now - began) / duration);
+        var eased = progress * progress * progress * (progress * (progress * 6 - 15) + 10);
+        model.resetTurntableRotation(start + delta * eased);
+        if (progress < 1) turnFrame = requestAnimationFrame(turn);
+        else turnFrame = 0;
+      };
+      turnFrame = requestAnimationFrame(turn);
+    };
+    model.addEventListener("load", function () {
+      if (selected) {
+        selected = false;
+        model.__setSelected(true);
+      }
+    });
+  }
+
   function orderedGames(games) {
     var releaseTime = function (game) {
       var time = Date.parse(game.releaseDate || "");
       return Number.isFinite(time) ? time : 0;
     };
     return games.map(function (game, index) { return {game: game, index: index}; }).sort(function (a, b) {
+      var featured = Number(!!b.game.featured) - Number(!!a.game.featured);
+      if (featured) return featured;
       var aReleased = a.game.released !== false;
       var bReleased = b.game.released !== false;
       if (aReleased !== bReleased) return aReleased ? -1 : 1;
@@ -748,6 +854,7 @@
       a.setAttribute("aria-label", "Load " + title);
       if (g.model) {
         var tileModel = modelViewer(g, title, false);
+        a.__model = tileModel;
         a.appendChild(tileModel);
         var modelState = el("span", "cart__model-state", "loading…");
         modelState.setAttribute("aria-hidden", "true");
@@ -940,7 +1047,10 @@
     if (gameInfo) gameInfo.hidden = false;
     document.getElementById("display-status").textContent = status;
     gameButtons.forEach(function (button, i) {
-      if (button) button.setAttribute("aria-pressed", String(i === index));
+      if (button) {
+        button.setAttribute("aria-pressed", String(i === index));
+        if (button.__model) button.__model.__setSelected(i === index);
+      }
     });
 
     var media = Array.isArray(g.media) ? g.media.slice() : [g.media];
@@ -992,8 +1102,15 @@
   if (wbName) {
     var games = KN.games || [];
     var onlyModels = typeof requireGameModel !== "undefined" && requireGameModel;
-    var first = games.findIndex(function (g) {
-      return (!onlyModels || g.model) && gameName(g.title || g.name).toLowerCase() === gameName((KN.project || {}).name).toLowerCase();
+    var first = -1;
+    var newestRelease = -Infinity;
+    games.forEach(function (g, index) {
+      if (g.released === false || (onlyModels && !g.model)) return;
+      var release = Date.parse(g.releaseDate || "") || 0;
+      if (release > newestRelease) {
+        newestRelease = release;
+        first = index;
+      }
     });
     if (first < 0) first = games.findIndex(function (g) { return !onlyModels || g.model; });
     if (first >= 0) selectGame(games[first], first);
