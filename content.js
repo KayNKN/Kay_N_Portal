@@ -67,6 +67,20 @@ window.KN = {
   logs: [
 
     {
+      date: "2026-10-25",
+      tag: "release",
+      title: "[ Game Release : Required_Calcs ]",
+      url: "",
+      desc: `Required_Calcs IS OUT NOW !!!!
+
+_Solve the calculations. Your life depends on it.
+
+_Grab a visit to The Game_Archive to get the game downloaded on your Machine .
+
+_See you on the next one Anons.`
+    },
+
+    {
       date: "2026-10-16",
       tag: "devlog",
       title: "[ New Game Entry : Required_Calcs ]",
