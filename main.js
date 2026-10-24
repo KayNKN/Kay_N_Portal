@@ -1062,6 +1062,7 @@
       });
     }
     var holder = document.getElementById("wb-media");
+    holder.style.removeProperty("--archive-stage-aspect");
     if (maxed && holder.contains(maxed)) unmaximise();
     holder.querySelectorAll("audio, video").forEach(function (player) { player.pause(); });
     holder.replaceChildren(el("div", "artslot", media.some(srcOf) ? "loading media…" : "no media yet"));
@@ -1099,6 +1100,20 @@
     details.hidden = (!g.pitch || g.pitch === g.desc) && !specs.textContent;
     document.getElementById("display-description").textContent = g.pitch || "";
   };
+  var archiveDetails = document.querySelector(".v2-display .display-details");
+  if (archiveDetails) {
+    archiveDetails.querySelector("summary").addEventListener("click", function () {
+      if (archiveDetails.open) return;
+      var holder = document.getElementById("wb-media");
+      var stage = holder.querySelector(".gal:not(.is-max) .gal__stage");
+      if (!stage) return;
+      // Retain the collapsed media proportions so the disclosure only grows down.
+      var bounds = stage.getBoundingClientRect();
+      if (bounds.width > 0 && bounds.height > 0) {
+        holder.style.setProperty("--archive-stage-aspect", bounds.width + " / " + bounds.height);
+      }
+    });
+  }
   if (wbName) {
     var games = KN.games || [];
     var onlyModels = typeof requireGameModel !== "undefined" && requireGameModel;

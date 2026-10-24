@@ -196,7 +196,7 @@ _Solve the calculations. Your life depends on it.
 [Left Mouse Button] - [Interact]`,
       modelRotation: "33deg",
       featured: true,
-      releaseDate: "2026-10-18",
+      releaseDate: "2026-10-25",
       released: true,
       year: "2026",
       platforms: "[Windows // 210 MB]\n[Linux // 202 MB]",
