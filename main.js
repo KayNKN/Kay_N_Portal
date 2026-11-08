@@ -8,6 +8,45 @@
   });
   var pad = function (n) { return String(n).padStart(2, "0"); };
 
+  // Keep animated previews live on screen without decoding hidden videos.
+  var previewNodes = new Set();
+  var syncPreview = function (node) {
+    var active = node.__inViewport && !document.hidden;
+    if (node.__setViewportActive) node.__setViewportActive(active);
+    else if (active) {
+      if (node.__previewSrc) {
+        node.src = node.__previewSrc;
+        delete node.__previewSrc;
+      }
+      node.play().catch(function () {});
+    }
+    else node.pause();
+  };
+  var previewObserver = "IntersectionObserver" in window ? new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      entry.target.__inViewport = entry.isIntersecting;
+      syncPreview(entry.target);
+    });
+  }) : null;
+  var watchPreview = function (node) {
+    queueMicrotask(function () {
+      previewNodes.forEach(function (old) {
+        if (!old.isConnected) {
+          if (previewObserver) previewObserver.unobserve(old);
+          previewNodes.delete(old);
+        }
+      });
+      if (!node.isConnected) return;
+      node.__inViewport = !previewObserver;
+      previewNodes.add(node);
+      if (previewObserver) previewObserver.observe(node);
+      else syncPreview(node);
+    });
+  };
+  document.addEventListener("visibilitychange", function () {
+    previewNodes.forEach(function (node) { if (node.isConnected) syncPreview(node); });
+  });
+
   var headlineReport = document.querySelector(".headline-report");
   if (headlineReport) {
     var headlineGroup = headlineReport.querySelector(".headline-report__group");
@@ -37,6 +76,7 @@
       video.poster = img.src;
       video.src = artwork.mainVideo;
       img.replaceWith(video);
+      watchPreview(video);
     });
   }
   var logoDialog;
@@ -314,14 +354,16 @@
     if (k === "audio") return buildAudio(src, cap);
     if (k === "video") {
       node = document.createElement("video");
-      node.src = src;
       var animated = !!(item && item.autoplay);
+      if (animated) node.__previewSrc = src;
+      else node.src = src;
       node.controls = !animated;
       node.playsInline = true;
       node.muted = animated;
       node.autoplay = animated;
       node.loop = animated;
       node.preload = animated ? "auto" : "metadata";
+      if (animated) watchPreview(node);
     } else {
       node = document.createElement("img");
       node.src = src;
@@ -504,8 +546,9 @@
           preview.controls = false;
           preview.preload = "auto";
           preview.setAttribute("aria-hidden", "true");
-          preview.src = src;
+          preview.__previewSrc = item.thumbnail || src;
           t.appendChild(preview);
+          watchPreview(preview);
         } else {
           t.textContent = k === "audio" ? "♪" : "▶";
         }
@@ -712,6 +755,7 @@
       if (item.model) {
         var model = document.createElement("model-viewer");
         model.className = "music-model";
+        model.setAttribute("loading", "lazy");
         model.src = item.model;
         model.setAttribute("alt", item.title || "Soundtrack CD model");
         model.setAttribute("camera-orbit", item.modelOrbit || (Math.random() * 360).toFixed(0) + "deg 75deg auto");
@@ -772,6 +816,13 @@
   function bindModelSelection(model, g) {
     var restingOrbit = model.getAttribute("camera-orbit");
     var selected = false;
+    var viewportActive = true;
+    model.__setViewportActive = function (active) {
+      viewportActive = active;
+      model.toggleAttribute("auto-rotate", active && !selected);
+      model.style.animationPlayState = active ? "running" : "paused";
+    };
+    watchPreview(model);
     var turnFrame = 0;
     var settleAnimation = null;
     model.__setSelected = function (value) {
@@ -790,7 +841,7 @@
       model.style.rotate = value ? "0deg" : "";
       if (!value) {
         if (g.modelFrontPolar != null) model.setAttribute("camera-orbit", restingOrbit);
-        model.setAttribute("auto-rotate", "");
+        model.toggleAttribute("auto-rotate", viewportActive);
         return;
       }
       model.removeAttribute("auto-rotate");

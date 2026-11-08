@@ -21,7 +21,7 @@ window.KN = {
     pitch: "[Keep_the_Camera_ON.]",
 
     media: [
-      "art/A_Way_Out/A_Way_Out_GIF.gif",
+      { src: "art/A_Way_Out/A_Way_Out-preview.mp4", thumbnail: "art/A_Way_Out/A_Way_Out-thumb.mp4", autoplay: true },
       "art/A_Way_Out/A_Way_Out_Img_1.png",
       "art/A_Way_Out/A_Way_Out_Img_2.png",
       "art/A_Way_Out/A_Way_Out_Img_3.png",
@@ -198,7 +198,7 @@ WHAT I LEARNED
 WHAT IS NEXT
 [_More cool stuff to release! I am looking forward to seeing you play and have a blast, or maybe not (the next game is a bit of a rage/brain game, not going to lie). Make sure to follow my socials to stay up to date with the latest projects and news. There is a Discord server where you can chat with me and other players, and a Twitter account where I post behind_the_scenes things. Until then, see you around.]`,
       media: [
-        "art/DEAD_BAND/DEAD_BAND_GIF.gif",
+        { src: "art/DEAD_BAND/DEAD_BAND-preview.mp4", thumbnail: "art/DEAD_BAND/DEAD_BAND-thumb.mp4", autoplay: true },
         "art/DEAD_BAND/DEAD_BAND_Img_1.png",
         "art/DEAD_BAND/DEAD_BAND_Img_2.png",
         "art/DEAD_BAND/DEAD_BAND_Img_3.png",
@@ -211,7 +211,7 @@ WHAT IS NEXT
       desc: "[_A look into a horror experience I have been working on for a while now.\n_Keep an eye on it, Anon.]",
 
       media: [
-      "art/A_Way_Out/A_Way_Out_GIF.gif",
+      { src: "art/A_Way_Out/A_Way_Out-preview.mp4", thumbnail: "art/A_Way_Out/A_Way_Out-thumb.mp4", autoplay: true },
       "art/A_Way_Out/A_Way_Out_Img_1.png",
       "art/A_Way_Out/A_Way_Out_Img_2.png",
       "art/A_Way_Out/A_Way_Out_Img_3.png",
@@ -250,7 +250,7 @@ _Thank you for playing my first game. See you around.`
       title: "[By_The_End]",
       version: "V_1.0",
       defaultSelected: true,
-      model: "art/models/By_The_End.glb",
+      model: "art/models/By_The_End.glb?v=20261108-optimized",
       releaseDate: "2026-11-07",
       featured: true,
       modelRotation: "33deg",
@@ -270,7 +270,7 @@ _You Have To Keep MOVING FORWARD,
         { os: "Linux", size: "78 MB", file: "https://www.dropbox.com/scl/fi/05q232zw4yzje7tmjtzkl/BY_THE_END_Linux.zip?rlkey=k004pi7ykv6v6rpi9iyun0u9l&st=isqkjn54&dl=1" }
       ],
       media: [
-        { src: "art/BY_THE_END/BY_THE_END_MP4.mp4", autoplay: true },
+        { src: "art/BY_THE_END/BY_THE_END-preview.mp4", thumbnail: "art/BY_THE_END/BY_THE_END-thumb.mp4", autoplay: true },
         "art/BY_THE_END/BY_THE_END_Img_1.png",
         "art/BY_THE_END/BY_THE_END_Img_2.png",
         "art/BY_THE_END/BY_THE_END_Img_3.png",
@@ -298,7 +298,7 @@ _Solve the calculations. Your life depends on it.
         { os: "Linux", size: "202 MB", file: "https://www.dropbox.com/scl/fi/ja5d5q5pdo94jk9j90hvn/Required_Calcs_Linux.zip?rlkey=g1c1m3wzzh95vwrys8blxczdu&st=j133sceh&dl=1" }
       ],
       media: [
-        { src: "art/Required_Calcs/Required_Calcs.mp4", autoplay: true },
+        { src: "art/Required_Calcs/Required_Calcs-preview.mp4", thumbnail: "art/Required_Calcs/Required_Calcs-thumb.mp4", autoplay: true },
         "art/Required_Calcs/Required_Calcs_Img_1.png",
         "art/Required_Calcs/Required_Calcs_Img_2.png",
         "art/Required_Calcs/Required_Calcs_Img_3.png",
@@ -334,7 +334,7 @@ _GOOD TO KNOW: The camera can only recharge when it is turned off.
 [Mouse Wheel] - Zoom`,
 
       media: [
-        "art/A_Way_Out/A_Way_Out_GIF.gif",
+        { src: "art/A_Way_Out/A_Way_Out-preview.mp4", thumbnail: "art/A_Way_Out/A_Way_Out-thumb.mp4", autoplay: true },
         "art/A_Way_Out/A_Way_Out_Img_1.png",
         "art/A_Way_Out/A_Way_Out_Img_2.png",
         "art/A_Way_Out/A_Way_Out_Img_3.png",
@@ -367,7 +367,7 @@ _Someone has to work around here.
       version: "V_1.0",
       platforms: "[Windows // 63 MB]\n[Linux // 60 MB]",
       media: [
-      "art/DEAD_BAND/DEAD_BAND_GIF.gif",
+      { src: "art/DEAD_BAND/DEAD_BAND-preview.mp4", thumbnail: "art/DEAD_BAND/DEAD_BAND-thumb.mp4", autoplay: true },
       "art/DEAD_BAND/DEAD_BAND_Img_1.png",
       "art/DEAD_BAND/DEAD_BAND_Img_2.png",
       "art/DEAD_BAND/DEAD_BAND_Img_3.png",
