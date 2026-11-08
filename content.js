@@ -266,8 +266,8 @@ _You Have To Keep MOVING FORWARD,
 [F] - Interact`,
       platforms: "[Windows // 85 MB]\n[Linux // 78 MB]",
       downloads: [
-        { os: "Windows", size: "85 MB", file: "https://www.dropbox.com/scl/fi/l8o9tfuaypuah5vquzlec/BY_THE_END_Win.zip?rlkey=ssi5w07qakkei3x3vxk98jchp&st=vkoaqf57&dl=1" },
-        { os: "Linux", size: "78 MB", file: "https://www.dropbox.com/scl/fi/m4zyjnolviiumf585vh2g/BY_THE_END_Linux.zip?rlkey=dat5s8b9ge8zk57570s6ydxy8&st=02jrf500&dl=1" }
+        { os: "Windows", size: "85 MB", file: "https://www.dropbox.com/scl/fi/nku77v7vdgedu3nc1mm8w/BY_THE_END_Win.zip?rlkey=thimv0we47h60ssgg7twejkvu&st=0fq7a4r7&dl=1" },
+        { os: "Linux", size: "78 MB", file: "https://www.dropbox.com/scl/fi/05q232zw4yzje7tmjtzkl/BY_THE_END_Linux.zip?rlkey=k004pi7ykv6v6rpi9iyun0u9l&st=isqkjn54&dl=1" }
       ],
       media: [
         { src: "art/BY_THE_END/BY_THE_END_MP4.mp4", autoplay: true },
