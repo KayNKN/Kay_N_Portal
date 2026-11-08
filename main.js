@@ -8,6 +8,17 @@
   });
   var pad = function (n) { return String(n).padStart(2, "0"); };
 
+  var headlineReport = document.querySelector(".headline-report");
+  if (headlineReport) {
+    var headlineGroup = headlineReport.querySelector(".headline-report__group");
+    var headlineCopy = headlineGroup.cloneNode(true);
+    headlineCopy.setAttribute("aria-hidden", "true");
+    headlineCopy.setAttribute("inert", "");
+    headlineCopy.querySelectorAll("a").forEach(function (link) { link.tabIndex = -1; });
+    headlineReport.querySelector(".headline-report__track").appendChild(headlineCopy);
+    headlineReport.classList.add("is-ready");
+  }
+
   var artwork = KN.artwork || {};
   if (artwork.tabIcon) {
     document.querySelectorAll('link[rel="icon"]').forEach(function (icon) { icon.href = artwork.tabIcon; });
@@ -394,7 +405,9 @@
       });
     });
     var releaseStamp = null;
-    if (releaseGame && releaseGame.releaseDate) {
+    if (releaseGame && releaseGame.mediaBanner) {
+      releaseStamp = el("span", "gal__release", releaseGame.mediaBanner);
+    } else if (releaseGame && releaseGame.releaseDate) {
       var parts = releaseGame.releaseDate.split("-");
       releaseStamp = el("time", "gal__release", parts[2] + "//" + parts[1] + "//" + parts[0]);
       releaseStamp.setAttribute("datetime", releaseGame.releaseDate);
@@ -1127,6 +1140,8 @@
         first = index;
       }
     });
+    var preferred = games.findIndex(function (g) { return g.defaultSelected && (!onlyModels || g.model); });
+    if (preferred >= 0) first = preferred;
     if (first < 0) first = games.findIndex(function (g) { return !onlyModels || g.model; });
     if (first >= 0) selectGame(games[first], first);
     else if (!onlyModels) selectGame(Object.assign({released: false}, KN.project || {}), -1);

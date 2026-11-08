@@ -32,6 +32,17 @@ window.KN = {
 
   music: [
     {
+      game: "By_The_End",
+      title: "By_The_End OST",
+      model: "art/models/By_The_End_OST.glb?v=20261105-back",
+      modelFrontPolar: 90,
+      featured: true,
+      tracks: [
+        { title: "Closer Than Before", audio: "audio/BY_THE_END_OSTs/Closer_Than_Before.mp3", duration: 190.968 },
+        { title: "Realization", audio: "audio/BY_THE_END_OSTs/Realization.mp3", duration: 92.064 }
+      ]
+    },
+    {
       game: "Required_Calcs",
       title: "Required_Calcs OST",
       model: "art/models/Required_Calcs_OST.glb",
@@ -65,6 +76,44 @@ window.KN = {
   ],
 
   logs: [
+
+    {
+      date: "2026-11-07",
+      tag: "release",
+      title: "[ Game Release : By_The_End ]",
+      url: "",
+      desc: `BY_THE_END is Out NOW!!!
+
+_Head to the Games archive, choose your download, and experience the first of "4" experiences early. It's an interesting start_point for something big to come. Join the Discord so you can stay up to date and chat with us.
+
+_See you on the next one, Anon.`
+    },
+
+    {
+      date: "2026-11-03",
+      tag: "devlog",
+      title: "[ New Game Entry : By_The_End ]",
+      url: "",
+      desc: `Hello Anon,
+
+[_BY_THE_END is another addition to the Game_Archive, and a special one at that.]
+
+[_It will be the first playable experience in a collection of planned experiences, packaged together and submitted to the LSD26 Game Jam.]
+
+[_As I get the hang of Godot and learn GDScript, I am feeling confident that Godot will be my primary engine for making games and experiences. Going from writing code to seeing it take effect in the engine feels so much smoother to me. The quick iteration with GDScript has been a big part of that, because I hate waiting for shit to compile before seeing it come to life. I also like being able to tweak values and move things around while the game is running. It makes experimenting and getting things to feel right much easier.]
+
+[_That being said, I am sure Godot has limitations I have not run into yet, and there will be things Unity handles better. But hey, that goes for everything in life. You cannot have the good without some bad.]`
+    },
+
+    {
+      date: "2026-11-02",
+      tag: "misc",
+      title: "[ Website Update : Headline Report ]",
+      url: "",
+      desc: `_Added a Headline_Report to the homepage. A scrolling feed of game updates, releases, and community news, right above the Game_Archive.
+
+_Keep an eye on it, Anon.`
+    },
 
     {
       date: "2026-10-25",
@@ -198,6 +247,37 @@ _Thank you for playing my first game. See you around.`
 
   games: [
     {
+      title: "[By_The_End]",
+      version: "V_1.0",
+      defaultSelected: true,
+      model: "art/models/By_The_End.glb",
+      releaseDate: "2026-11-07",
+      featured: true,
+      modelRotation: "33deg",
+      released: true,
+      year: "2026",
+      pitch: `//_Developed by: Kay_N
+
+_You Have To Keep MOVING FORWARD,
+
+//Controls//
+[W][A][S][D] - Movement
+[Mouse] - Look around
+[F] - Interact`,
+      platforms: "[Windows // 85 MB]\n[Linux // 78 MB]",
+      downloads: [
+        { os: "Windows", size: "85 MB", file: "https://www.dropbox.com/scl/fi/l8o9tfuaypuah5vquzlec/BY_THE_END_Win.zip?rlkey=ssi5w07qakkei3x3vxk98jchp&st=vkoaqf57&dl=1" },
+        { os: "Linux", size: "78 MB", file: "https://www.dropbox.com/scl/fi/m4zyjnolviiumf585vh2g/BY_THE_END_Linux.zip?rlkey=dat5s8b9ge8zk57570s6ydxy8&st=02jrf500&dl=1" }
+      ],
+      media: [
+        { src: "art/BY_THE_END/BY_THE_END_MP4.mp4", autoplay: true },
+        "art/BY_THE_END/BY_THE_END_Img_1.png",
+        "art/BY_THE_END/BY_THE_END_Img_2.png",
+        "art/BY_THE_END/BY_THE_END_Img_3.png",
+        "https://youtu.be/A__DVEbT7pg"
+      ]
+    },
+    {
       title: "[Required_Calcs]",
       model: "art/models/Required_Calcs.glb",
       version: "V_1.0",
@@ -206,10 +286,9 @@ _Thank you for playing my first game. See you around.`
 _Solve the calculations. Your life depends on it.
 
 //Controls//
-[A] // [D] - [Adjust Music Volume]
-[Left Mouse Button] - [Interact]`,
+[A] // [D] - Adjust Music Volume
+[Left Mouse Button] - Interact`,
       modelRotation: "33deg",
-      featured: true,
       releaseDate: "2026-10-25",
       released: true,
       year: "2026",
@@ -252,7 +331,7 @@ _GOOD TO KNOW: The camera can only recharge when it is turned off.
 [W][A][S][D] - Movement
 [Mouse] - Look around
 [Shift] - Sprint
-[Mouse wheel] - Zoom`,
+[Mouse Wheel] - Zoom`,
 
       media: [
         "art/A_Way_Out/A_Way_Out_GIF.gif",
@@ -283,8 +362,8 @@ _GOOD TO KNOW: The camera can only recharge when it is turned off.
 _Someone has to work around here.
 
 //Controls//
-[W][A][S][D] - [Movement]
-[F / Left mouse button] - [Interact]`,
+[W][A][S][D] - Movement
+[F / Left Mouse Button] - Interact`,
       version: "V_1.0",
       platforms: "[Windows // 63 MB]\n[Linux // 60 MB]",
       media: [
