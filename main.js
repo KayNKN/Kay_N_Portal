@@ -755,7 +755,7 @@
       if (item.model) {
         var model = document.createElement("model-viewer");
         model.className = "music-model";
-        model.setAttribute("loading", "lazy");
+        model.setAttribute("loading", "eager");
         model.src = item.model;
         model.setAttribute("alt", item.title || "Soundtrack CD model");
         model.setAttribute("camera-orbit", item.modelOrbit || (Math.random() * 360).toFixed(0) + "deg 75deg auto");
@@ -801,7 +801,7 @@
     model.setAttribute("environment-image", "neutral");
     model.setAttribute("shadow-intensity", "0");
     model.setAttribute("interaction-prompt", "none");
-    model.setAttribute("loading", "lazy");
+    model.setAttribute("loading", "eager");
     bindModelSelection(model, g);
     if (interactive) {
       model.setAttribute("camera-controls", "");
